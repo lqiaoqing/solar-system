@@ -1,0 +1,29 @@
+  if(!S.paused){S.t+=dt*getSpeed()*S.dir;var tmin=-73000,tmax=109500;if(S.t<tmin||S.t>tmax){S.t=clamp(S.t,tmin,tmax);S.paused=true;}}
+  if(S.tw){S.tw.t+=dt;var p=clamp(S.tw.t/S.tw.dur,0,1),e=ease(p);S.z=lerp(S.tw.z0,S.tw.z1,e);S.zT=S.z;
+   if(S.panTw){var f=(1-e)*Math.min(1,Math.pow(10,S.z-S.panTw.z0));S.panX=S.panTw.x*f;S.panY=S.panTw.y*f;}
+   if(p>=1){S.tw=null;S.panTw=null;S.panX=0;S.panY=0;}}
+  else{S.z+=(S.zT-S.z)*(1-Math.exp(-dt*9));if(Math.abs(S.zT-S.z)<1e-5)S.z=S.zT;
+   if(S.panTw&&S.panTw.solo){S.panTw.t+=dt;var q=ease(clamp(S.panTw.t/S.panTw.dur,0,1));S.panX=S.panTw.x*(1-q);S.panY=S.panTw.y*(1-q);if(q>=1)S.panTw=null;}}
+  if(!isFinite(S.z)){S.z=S.zT=LV[1].z;}if(!isFinite(S.t))S.t=(Date.now()-J2000MS)/864e5;if(!isFinite(S.panX)||!isFinite(S.panY)){S.panX=S.panY=0;}
+  computeBodies();
+  if(S.anchor){sc=halfMin/Math.pow(10,S.z);var ac=autoCenter(S.z),fp=S.follow?bodyPos(S.follow):ac;CX=lerp(ac[0],fp[0],S.followB)+S.panX;CY=lerp(ac[1],fp[1],S.followB)+S.panY;applyAnchor();}
+  render(ts);journeyTick(dt);
+ }catch(err){errCount++;if(errCount<4&&window.console)console.error(err);}
+ requestAnimationFrame(frame);}
+function onResize(){var w=window.innerWidth||root.clientWidth||800,h=window.innerHeight||root.clientHeight||600;if(w<50||h<50)return;W=w;H=h;MIN=Math.min(W,H);halfMin=MIN*0.46;buildStars();layout();}
+var rsT=null;function queueResize(){clearTimeout(rsT);rsT=setTimeout(onResize,120);}
+window.addEventListener('resize',queueResize);window.addEventListener('orientationchange',function(){setTimeout(onResize,300);});
+if(window.visualViewport)window.visualViewport.addEventListener('resize',queueResize);
+L.ui.appendChild(vig);root.insertBefore(vig,L.ui);
+onResize();computeBodies();
+var manual=/manual|nojourney/.test(location.hash+location.search);
+if(!manual)setTimeout(function(){if(!S.journey&&S.hintT===0)startJourney();},1800);
+requestAnimationFrame(frame);
+// test hooks
+window.__solar={S:S,LV:LV,goLevel:function(i,inst){stopJourney();if(inst){reframe(null);S.tw=null;S.panTw=null;S.panX=S.panY=0;S.z=S.zT=LV[i].z;}else goLevel(i);},
+ setZ:function(z){S.tw=null;S.z=S.zT=z;},showCard:showCard,hideCard:hideCard,flyTo:flyTo,startJourney:startJourney,stopJourney:stopJourney,btn:function(id){BT[id].fn();},
+ errors:function(){return errCount;},vis:function(){return visList.map(function(v){return v.k;});},pos:POS};
+})();
+]]></script>
+</svg>
+</body></html>
