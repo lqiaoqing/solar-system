@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#000000">
+<title>太阳系 · 宇宙尺度之旅</title>
+<style>:root{--sab:env(safe-area-inset-bottom,0px)}html,body{margin:0;padding:0;height:100%;width:100%;background:#000;overflow:hidden;overscroll-behavior:none;position:fixed;touch-action:none;box-sizing:border-box}body{padding-bottom:env(safe-area-inset-bottom,0px)}#solarRoot{position:fixed;left:0;top:0;width:100%;height:100%}</style>
+</head><body>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="solarRoot" width="100%" height="100%" style="display:block">
+<title>太阳系 · 宇宙尺度之旅</title>
+<style><![CDATA[
+svg{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;background:#000;cursor:grab}
+text{font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC","WenQuanYi Micro Hei",sans-serif;}
+.lbl{fill:#dde6ff;font-size:12px;paint-order:stroke;stroke:#02040c;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.sunl{fill:#ffe7a8;font-size:13px}.rl{fill:#8fdcff;font-size:11px}.cl{fill:#bfeaff;font-size:11px}.crl{fill:#aeefff;font-size:11px}
+.sl{fill:#e8ecff;font-size:11px}.ml{fill:#ffe39a;font-size:12.5px;font-weight:bold}.you{fill:#8fe6ff;font-size:13px;font-weight:bold}
+.gl{fill:#cdd6ff;font-size:12px;opacity:.85}.glc{fill:#ffe6b0}
+.ttl{fill:#fff;font-weight:bold;letter-spacing:1px}.sub{fill:#9fb0d8}
+.hd{fill:#fff}.hs{fill:#a9b8e0}
+.panel{fill:rgba(8,12,28,.62);stroke:rgba(130,160,255,.22);stroke-width:1}
+.panel2{fill:rgba(8,12,30,.9);stroke:rgba(130,160,255,.3);stroke-width:1}
+.capt{fill:#ffe6a6;font-weight:bold}.capd{fill:#d6def5}.capi{fill:#7f8fb8;text-anchor:end}
+.st{fill:#eef2ff}.sl2{fill:#9fdcff}.note{fill:#8f9cc0}
+.gl2{fill:#b8c6ee;font-size:11px}.gn{fill:#7f8fb8;font-size:10px}.gh{cursor:ns-resize}
+.hint{fill:#cfe0ff;paint-order:stroke;stroke:#000;stroke-width:3px}
+.btn{cursor:pointer}.btn rect{fill:rgba(18,26,52,.78);stroke:rgba(140,170,255,.3);stroke-width:1}
+.btn.on rect{fill:rgba(56,104,200,.62);stroke:rgba(170,200,255,.6)}.btn.down rect{fill:rgba(90,140,240,.7)}
+.btn.disp{cursor:default}.btn.disp rect{fill:rgba(10,14,30,.55);stroke:rgba(140,170,255,.15)}
+.bi{fill:none;stroke:#e6ecff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn path.bi[d*="Z"]{fill:#e6ecff}
+.bt{fill:#e6ecff;font-size:13px}
+.tipt{fill:#fff;font-size:14px;font-weight:bold}.tipd{fill:#b8c8ee;font-size:12px}
+.ct{fill:#fff;font-size:19px;font-weight:bold}.cs{fill:#9fc0ff;font-size:12.5px}
+.crk{fill:#8f9fc8;font-size:12.5px}.crv{fill:#e8eeff;font-size:12.5px}.cf{fill:#cfd8f0;font-size:12.5px}.cl2{fill:#ffd98a;font-size:12px}
+.ct2{fill:#fff;font-size:14px;font-weight:bold}.cn{fill:#e8eeff;font-size:12px}.cr{fill:#9fb0d8;font-size:11px}.cr2{fill:#cfd8f0}
+]]></style>
+<defs>
+<clipPath id="c100"><circle r="100"/></clipPath>
+<linearGradient id="gTerm" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset=".46" stop-color="#000" stop-opacity="0"/><stop offset=".55" stop-color="#01030a" stop-opacity=".62"/><stop offset=".66" stop-color="#01030a" stop-opacity=".9"/><stop offset="1" stop-color="#01030a" stop-opacity=".97"/></linearGradient>
+<radialGradient id="gLimb"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset=".92" stop-color="#000" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
+<radialGradient id="gSpec"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<radialGradient id="gAtmoE"><stop offset=".86" stop-color="#6fb4ff" stop-opacity="0"/><stop offset=".95" stop-color="#8cc6ff" stop-opacity=".55"/><stop offset="1" stop-color="#8cc6ff" stop-opacity="0"/></radialGradient>
+<radialGradient id="gAtmoV"><stop offset=".86" stop-color="#fff0c0" stop-opacity="0"/><stop offset=".95" stop-color="#fff0c8" stop-opacity=".45"/><stop offset="1" stop-color="#fff0c8" stop-opacity="0"/></radialGradient>
+<radialGradient id="gAtmoB"><stop offset=".86" stop-color="#9fe8ff" stop-opacity="0"/><stop offset=".95" stop-color="#b8f0ff" stop-opacity=".4"/><stop offset="1" stop-color="#b8f0ff" stop-opacity="0"/></radialGradient>
+<!-- Sun -->
+<radialGradient id="gSunDisk"><stop offset="0" stop-color="#fffef6"/><stop offset=".45" stop-color="#fff3c2"/><stop offset=".75" stop-color="#ffd166"/><stop offset=".9" stop-color="#ffa436"/><stop offset=".97" stop-color="#f27a22"/><stop offset="1" stop-color="#d9561a"/></radialGradient>
+<radialGradient id="gSunHalo"><stop offset="0" stop-color="#fff2c8" stop-opacity=".9"/><stop offset=".12" stop-color="#ffd48a" stop-opacity=".55"/><stop offset=".3" stop-color="#ffb055" stop-opacity=".2"/><stop offset=".6" stop-color="#ff9040" stop-opacity=".06"/><stop offset="1" stop-color="#ff8030" stop-opacity="0"/></radialGradient>
+<radialGradient id="gCorona"><stop offset=".2" stop-color="#fff6e0" stop-opacity=".5"/><stop offset=".45" stop-color="#ffe7c0" stop-opacity=".18"/><stop offset="1" stop-color="#ffd8a0" stop-opacity="0"/></radialGradient>
+<radialGradient id="gStreamer" cx="0" cy=".5" r="1"><stop offset="0" stop-color="#fff4dc" stop-opacity=".45"/><stop offset=".6" stop-color="#ffe3b8" stop-opacity=".08"/><stop offset="1" stop-color="#ffe3b8" stop-opacity="0"/></radialGradient>
+<radialGradient id="gSpot"><stop offset="0" stop-color="#2a0e04" stop-opacity=".9"/><stop offset=".5" stop-color="#5a2208" stop-opacity=".75"/><stop offset="1" stop-color="#b2561a" stop-opacity="0"/></radialGradient>
+<radialGradient id="gGran"><stop offset="0" stop-color="#fff8d8" stop-opacity=".35"/><stop offset="1" stop-color="#fff8d8" stop-opacity="0"/></radialGradient>
+<!-- star glows -->
+<radialGradient id="gGlowW"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".18" stop-color="#eef2ff" stop-opacity=".45"/><stop offset="1" stop-color="#dfe6ff" stop-opacity="0"/></radialGradient>
+<radialGradient id="gGlowB"><stop offset="0" stop-color="#f2f5ff" stop-opacity=".95"/><stop offset=".18" stop-color="#a9c0ff" stop-opacity=".45"/><stop offset="1" stop-color="#8fa8ff" stop-opacity="0"/></radialGradient>
+<radialGradient id="gGlowY"><stop offset="0" stop-color="#fffdf0" stop-opacity=".95"/><stop offset=".18" stop-color="#ffe9b8" stop-opacity=".45"/><stop offset="1" stop-color="#ffd890" stop-opacity="0"/></radialGradient>
+<radialGradient id="gGlowK"><stop offset="0" stop-color="#fff4e6" stop-opacity=".95"/><stop offset=".18" stop-color="#ffc98f" stop-opacity=".45"/><stop offset="1" stop-color="#ffab60" stop-opacity="0"/></radialGradient>
+<radialGradient id="gGlowM"><stop offset="0" stop-color="#ffe6d6" stop-opacity=".95"/><stop offset=".18" stop-color="#ff9a6a" stop-opacity=".45"/><stop offset="1" stop-color="#ff7040" stop-opacity="0"/></radialGradient>
+<!-- background -->
+<radialGradient id="gBg" cx=".5" cy=".45" r=".75"><stop offset="0" stop-color="#070a18"/><stop offset=".6" stop-color="#03040c"/><stop offset="1" stop-color="#000"/></radialGradient>
+<radialGradient id="gBand"><stop offset="0" stop-color="#dfe2ff" stop-opacity=".2"/><stop offset=".45" stop-color="#b8c2f0" stop-opacity=".08"/><stop offset="1" stop-color="#9aa8e0" stop-opacity="0"/></radialGradient>
+<radialGradient id="gBandWarm"><stop offset="0" stop-color="#ffe9c8" stop-opacity=".22"/><stop offset=".5" stop-color="#f0d0a8" stop-opacity=".07"/><stop offset="1" stop-color="#f0d0a8" stop-opacity="0"/></radialGradient>
+<radialGradient id="gDark"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+<radialGradient id="gNeb1"><stop offset="0" stop-color="#ff6fa0" stop-opacity=".12"/><stop offset="1" stop-color="#ff6fa0" stop-opacity="0"/></radialGradient>
+<radialGradient id="gNeb2"><stop offset="0" stop-color="#5fb0ff" stop-opacity=".1"/><stop offset="1" stop-color="#5fb0ff" stop-opacity="0"/></radialGradient>
+<radialGradient id="gVig" cx=".5" cy=".5" r=".72"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
+<radialGradient id="gGalFar"><stop offset="0" stop-color="#f4ecff" stop-opacity=".7"/><stop offset=".3" stop-color="#c8c0ff" stop-opacity=".25"/><stop offset="1" stop-color="#a0a0ff" stop-opacity="0"/></radialGradient>
+<!-- galaxy -->
+<radialGradient id="gBulge"><stop offset="0" stop-color="#fffbea" stop-opacity="1"/><stop offset=".18" stop-color="#ffe7b0" stop-opacity=".85"/><stop offset=".45" stop-color="#f3c27a" stop-opacity=".35"/><stop offset="1" stop-color="#e0a060" stop-opacity="0"/></radialGradient>
+<radialGradient id="gGDisk"><stop offset="0" stop-color="#fff0d6" stop-opacity=".4"/><stop offset=".3" stop-color="#d8cce0" stop-opacity=".16"/><stop offset=".7" stop-color="#8090c8" stop-opacity=".07"/><stop offset="1" stop-color="#6070b0" stop-opacity="0"/></radialGradient>
+<radialGradient id="gBar"><stop offset="0" stop-color="#ffeec8" stop-opacity=".75"/><stop offset=".6" stop-color="#ffd08a" stop-opacity=".25"/><stop offset="1" stop-color="#ffc070" stop-opacity="0"/></radialGradient>
+<radialGradient id="gArm"><stop offset="0" stop-color="#e4ecff" stop-opacity=".3"/><stop offset=".45" stop-color="#b4c6ff" stop-opacity=".12"/><stop offset="1" stop-color="#90a8f0" stop-opacity="0"/></radialGradient>
+<radialGradient id="gArmW"><stop offset="0" stop-color="#fff2dc" stop-opacity=".3"/><stop offset=".45" stop-color="#f0d8b0" stop-opacity=".12"/><stop offset="1" stop-color="#e0c090" stop-opacity="0"/></radialGradient>
+<radialGradient id="gInner"><stop offset="0" stop-color="#fff0d0" stop-opacity=".45"/><stop offset=".5" stop-color="#f0d8b8" stop-opacity=".14"/><stop offset="1" stop-color="#d8c0a0" stop-opacity="0"/></radialGradient>
+<radialGradient id="gHII"><stop offset="0" stop-color="#ff9ac0" stop-opacity=".85"/><stop offset="1" stop-color="#ff6a9a" stop-opacity="0"/></radialGradient>
+<radialGradient id="gCloud"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".6" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<!-- small bodies -->
+<radialGradient id="gComa"><stop offset="0" stop-color="#f4fdff" stop-opacity="1"/><stop offset=".25" stop-color="#bfeeff" stop-opacity=".55"/><stop offset="1" stop-color="#8fd8ff" stop-opacity="0"/></radialGradient>
+<linearGradient id="gIon" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bfe6ff" stop-opacity=".75"/><stop offset=".4" stop-color="#7fc4ff" stop-opacity=".3"/><stop offset="1" stop-color="#6fb0ff" stop-opacity="0"/></linearGradient>
+<linearGradient id="gDust" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff6dc" stop-opacity=".7"/><stop offset=".45" stop-color="#ffe6b0" stop-opacity=".22"/><stop offset="1" stop-color="#ffe0a0" stop-opacity="0"/></linearGradient>
+<radialGradient id="gOort"><stop offset="0" stop-color="#9fb8ff" stop-opacity="0"/><stop offset=".03" stop-color="#9fb8ff" stop-opacity=".1"/><stop offset=".25" stop-color="#8aa6f0" stop-opacity=".07"/><stop offset=".7" stop-color="#7090e0" stop-opacity=".03"/><stop offset="1" stop-color="#7090e0" stop-opacity="0"/></radialGradient>
+<radialGradient id="gHelio"><stop offset="0" stop-color="#4a8cff" stop-opacity="0"/><stop offset=".6" stop-color="#4a8cff" stop-opacity=".04"/><stop offset="1" stop-color="#6fb0ff" stop-opacity=".12"/></radialGradient>
+<radialGradient id="gPulse"><stop offset=".6" stop-color="#7fe0ff" stop-opacity="0"/><stop offset=".85" stop-color="#7fe0ff" stop-opacity=".5"/><stop offset="1" stop-color="#7fe0ff" stop-opacity="0"/></radialGradient>
+<!-- planet surfaces -->
+<radialGradient id="gMerc" cx=".42" cy=".4"><stop offset="0" stop-color="#c4beb6"/><stop offset=".7" stop-color="#8f8983"/><stop offset="1" stop-color="#66615c"/></radialGradient>
+<radialGradient id="gVen" cx=".42" cy=".4"><stop offset="0" stop-color="#f7e8c0"/><stop offset=".6" stop-color="#e2c286"/><stop offset="1" stop-color="#b98f4e"/></radialGradient>
+<radialGradient id="gOcean" cx=".42" cy=".4"><stop offset="0" stop-color="#3f86e0"/><stop offset=".7" stop-color="#1d56b0"/><stop offset="1" stop-color="#0f3276"/></radialGradient>
+<linearGradient id="gLand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6e8a4a"/><stop offset=".3" stop-color="#4f7a36"/><stop offset=".42" stop-color="#b59a62"/><stop offset=".5" stop-color="#3f7a34"/><stop offset=".6" stop-color="#a88f5a"/><stop offset=".75" stop-color="#4f7c3a"/><stop offset="1" stop-color="#e8eef2"/></linearGradient>
+<radialGradient id="gMoon" cx=".42" cy=".4"><stop offset="0" stop-color="#d8d5cf"/><stop offset=".7" stop-color="#aaa6a0"/><stop offset="1" stop-color="#7e7a75"/></radialGradient>
+<radialGradient id="gMars" cx=".42" cy=".4"><stop offset="0" stop-color="#e89565"/><stop offset=".6" stop-color="#c4592f"/><stop offset="1" stop-color="#8a3418"/></radialGradient>
+<linearGradient id="gJup" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8998a"/><stop offset=".1" stop-color="#c2b098"/><stop offset=".17" stop-color="#dac7a6"/><stop offset=".23" stop-color="#b08864"/><stop offset=".28" stop-color="#eadfc8"/><stop offset=".34" stop-color="#b07650"/><stop offset=".41" stop-color="#9a6440"/><stop offset=".45" stop-color="#f3ead8"/><stop offset=".54" stop-color="#eee2ca"/><stop offset=".57" stop-color="#b27a52"/><stop offset=".63" stop-color="#a56b45"/><stop offset=".67" stop-color="#f0e6d2"/><stop offset=".74" stop-color="#c49c76"/><stop offset=".8" stop-color="#ddcbb0"/><stop offset=".89" stop-color="#c0ad94"/><stop offset="1" stop-color="#9c8e7e"/></linearGradient>
+<linearGradient id="gSat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9ae9e"/><stop offset=".14" stop-color="#cfc190"/><stop offset=".3" stop-color="#e4d29e"/><stop offset=".37" stop-color="#cbb07a"/><stop offset=".45" stop-color="#f1dfb0"/><stop offset=".55" stop-color="#ead6a2"/><stop offset=".62" stop-color="#cfb27c"/><stop offset=".74" stop-color="#dfc995"/><stop offset=".88" stop-color="#c8b286"/><stop offset="1" stop-color="#ad9872"/></linearGradient>
+<radialGradient id="gUra" cx=".45" cy=".42"><stop offset="0" stop-color="#d0f5f7"/><stop offset=".6" stop-color="#9ad9e2"/><stop offset="1" stop-color="#6cb6c8"/></radialGradient>
+<radialGradient id="gNep" cx=".45" cy=".42"><stop offset="0" stop-color="#6a90f2"/><stop offset=".6" stop-color="#3a58c8"/><stop offset="1" stop-color="#22348a"/></radialGradient>
+<radialGradient id="gPlu" cx=".45" cy=".42"><stop offset="0" stop-color="#e6d4bc"/><stop offset=".7" stop-color="#c2a888"/><stop offset="1" stop-color="#8e7458"/></radialGradient>
+<radialGradient id="gSmall" cx=".42" cy=".4"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></radialGradient>
+
+<g id="s-mercury"><g clip-path="url(#c100)"><circle r="100" fill="url(#gMerc)"/>
+<g fill="#5d5853" opacity=".45"><circle cx="-30" cy="-40" r="16"/><circle cx="35" cy="10" r="22"/><circle cx="-50" cy="30" r="12"/><circle cx="10" cy="60" r="14"/><circle cx="60" cy="-45" r="9"/><circle cx="-10" cy="-5" r="7"/><circle cx="-70" cy="-10" r="8"/><circle cx="45" cy="55" r="8"/></g>
+<g fill="#e8e2d8" opacity=".35"><circle cx="-28" cy="-42" r="5"/><circle cx="20" cy="-70" r="4"/><circle cx="-5" cy="35" r="3"/><circle cx="70" cy="20" r="4"/></g></g></g>
+<g id="s-venus"><g clip-path="url(#c100)"><circle r="100" fill="url(#gVen)"/>
+<g fill="none" stroke="#fff8e0" stroke-width="10" opacity=".22" stroke-linecap="round"><path d="M-100 -40 Q-20 -60 60 -35 T140 -40"/><path d="M-110 5 Q-30 -15 40 10 T130 0"/><path d="M-100 50 Q-10 30 60 55"/></g>
