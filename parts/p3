@@ -1,0 +1,187 @@
+ {n:'太阳邻域',s:'太阳邻域',z:Math.log10(2.1e6),sp:365.25,
+  t:'太阳邻域',d:'方圆约 30 光年内的恒星：天狼星 8.6 光年、织女星 25 光年……恒星之间平均相隔数光年，而这片区域在银河系中不过是一粒尘埃。'},
+ {n:'银河系',s:'银河系',z:Math.log10(3.7e9),sp:365.25,
+  t:'银河系',d:'银河系直径约 10 万光年，拥有 1000 亿–4000 亿颗恒星。太阳位于猎户臂，距银心约 2.6 万光年，以约 230 千米/秒绕银心运行，转一圈约需 2.3 亿年——上一次在这个位置时，地球上的恐龙才刚刚出现。'}
+];
+var SPEEDS=[[1/86400,'实时'],[1/1440,'1 分钟/秒'],[1/24,'1 小时/秒'],[1,'1 天/秒'],[7,'1 周/秒'],[30.44,'1 个月/秒'],[365.25,'1 年/秒'],[1826.2,'5 年/秒'],[3652.5,'10 年/秒']];
+// reference rings (light-travel distance from Sun)
+var RINGS=[[0.1202,'1 光分'],[7.214,'1 光时'],[173.14,'1 光日'],[1212,'1 光周'],[5270,'1 光月'],[LY_AU,'1 光年'],[5*LY_AU,'5 光年'],[10*LY_AU,'10 光年'],[20*LY_AU,'20 光年'],[50*LY_AU,'50 光年'],[100*LY_AU,'100 光年'],[1000*LY_AU,'1,000 光年'],[1e4*LY_AU,'1 万光年']];
+var GC_LY=26000, GC_AU=GC_LY*LY_AU, GC_LAM=266.84*D2R;
+var GCX=Math.cos(GC_LAM)*GC_AU, GCY=Math.sin(GC_LAM)*GC_AU;
+// ---------- state ----------
+var W=800,H=600,MIN=600,halfMin=300;
+var S={z:LV[0].z,zT:LV[0].z,tw:null,panX:0,panY:0,panTw:null,follow:null,followB:0,
+ t:(Date.now()-J2000MS)/864e5,spI:3,dir:1,paused:false,labels:true,orbits:true,trueSize:false,compare:false,
+ journey:false,jStep:0,jPhase:'hold',jTimer:0,sel:null,hover:null,frame:0,lastTs:0};
+// ---------- layers ----------
+var L={};
+['bg','stars','band','farGal','galaxy','rings','oort','helio','kuiper','orbits','belt','nstars','measure','comets','craft','sun','bodies','labels','ui'].forEach(function(n){L[n]=el('g',{'class':'L-'+n},root);});
+L.ui.setAttribute('class','ui');
+var bgRect=el('rect',{fill:'url(#gBg)',x:0,y:0},L.bg);
+var vig=el('rect',{fill:'url(#gVig)','pointer-events':'none'},null);
+
+// ---------- background starfield (screen space, regenerated on resize) ----------
+var starLayers=[],twGroups=[];
+function buildStars(){
+ while(L.stars.firstChild)L.stars.removeChild(L.stars.firstChild);
+ while(L.band.firstChild)L.band.removeChild(L.band.firstChild);
+ starLayers=[];twGroups=[];
+ var r=mulberry(12345),span=Math.sqrt(W*W+H*H)*0.95;
+ var area=W*H,n=Math.round(clamp(area/1400,300,MOBILE?650:1100));
+ var cols=['#ffffff','#fff4e0','#dfe8ff','#ffe2c0','#cfdcff','#ffd2b0'];
+ for(var li=0;li<3;li++){
+  var g=el('g',{},L.stars);var paths={};
+  var cnt=Math.round(n*[0.62,0.28,0.10][li]);
+  for(var i=0;i<cnt;i++){
+   var x=(r()-.5)*2*span,y=(r()-.5)*2*span;
+   var c=cols[Math.floor(r()*cols.length)];
+   var w=[0.9,1.35,2.0][li]*(0.7+r()*0.6);
+   var key=c+'|'+w.toFixed(1);(paths[key]||(paths[key]=[])).push('M'+x.toFixed(1)+' '+y.toFixed(1)+'h0');
+  }
+  for(var kk in paths){var pp=kk.split('|');el('path',{d:paths[kk].join(''),stroke:pp[0],'stroke-width':pp[1],'stroke-linecap':'round',opacity:[0.55,0.75,0.95][li]},g);}
+  starLayers.push({g:g,depth:li});
+ }
+ // twinkling bright stars with small glow
+ for(var t=0;t<4;t++){var tg=el('g',{},starLayers[2].g);twGroups.push(tg);
+  for(var j=0;j<(MOBILE?6:10);j++){var x2=(r()-.5)*2*span,y2=(r()-.5)*2*span,rr=2+r()*3;
+   el('circle',{cx:x2.toFixed(1),cy:y2.toFixed(1),r:(rr*2.2).toFixed(1),fill:['url(#gGlowW)','url(#gGlowB)','url(#gGlowY)','url(#gGlowK)'][j%4]},tg);
+   el('circle',{cx:x2.toFixed(1),cy:y2.toFixed(1),r:(0.9+r()*0.5).toFixed(2),fill:'#fff'},tg);}}
+ // Milky Way band: soft stretched gradients + dust + dense faint stars
+ var bw=span*2.4;
+ var bg=el('g',{},L.band);L.bandG=bg;
+ el('ellipse',{rx:bw/2,ry:span*0.26,fill:'url(#gBand)'},bg);
+ el('ellipse',{rx:bw/2.6,ry:span*0.13,fill:'url(#gBand)'},bg);
+ el('ellipse',{cx:span*0.35,rx:span*0.55,ry:span*0.16,fill:'url(#gBandWarm)'},bg);
+ el('ellipse',{cx:span*0.3,cy:span*0.01,rx:span*0.5,ry:span*0.025,fill:'url(#gDark)'},bg);
+ el('ellipse',{cx:span*0.62,cy:-span*0.02,rx:span*0.25,ry:span*0.03,fill:'url(#gDark)'},bg);
+ el('ellipse',{cx:-span*0.4,cy:span*0.03,rx:span*0.35,ry:span*0.02,fill:'url(#gDark)'},bg);
+ el('ellipse',{cx:span*0.15,cy:-span*0.07,rx:span*0.06,ry:span*0.04,fill:'url(#gNeb1)'},bg);
+ el('ellipse',{cx:-span*0.55,cy:span*0.06,rx:span*0.08,ry:span*0.05,fill:'url(#gNeb2)'},bg);
+ var bd=[];for(var q=0;q<(MOBILE?500:1100);q++){var bx=(r()-.5)*bw,by=gauss(r)*span*0.07*(1-0.5*Math.abs(bx)/bw);bd.push('M'+bx.toFixed(1)+' '+by.toFixed(1)+'h0');}
+ el('path',{d:bd.join(''),stroke:'#e8ecff','stroke-width':0.8,'stroke-linecap':'round',opacity:0.45},bg);
+ // distant galaxies (visible from the galaxy level)
+ while(L.farGal.firstChild)L.farGal.removeChild(L.farGal.firstChild);
+ for(var fg=0;fg<9;fg++){var gx=(r()-.5)*W*1.8,gy=(r()-.5)*H*1.8,gs=3+r()*9;
+  el('ellipse',{cx:gx.toFixed(1),cy:gy.toFixed(1),rx:gs.toFixed(1),ry:(gs*(0.3+r()*0.5)).toFixed(1),fill:'url(#gGalFar)',transform:'rotate('+(r()*180).toFixed(0)+' '+gx.toFixed(1)+' '+gy.toFixed(1)+')'},L.farGal);}
+}
+// ---------- dot-cloud helpers (world space, non-scaling round dots) ----------
+function dotPath(parent,pts,col,w,op){var s=[];for(var i=0;i<pts.length;i+=2)s.push('M'+pts[i].toFixed(3)+' '+pts[i+1].toFixed(3)+'h0');
+ return el('path',{d:s.join(''),stroke:col,'stroke-width':w,'stroke-linecap':'round','vector-effect':'non-scaling-stroke',opacity:op,fill:'none'},parent);}
+var RN=mulberry(2026);
+// asteroid belt annuli (differential Keplerian rotation), Kirkwood gaps
+var GAPS=[[2.502,0.035],[2.825,0.025],[2.958,0.018],[3.279,0.04]];
+var beltOuter=el('g',{},L.belt), beltAnn=[];
+(function(){var nb=MOBILE?1300:2400,bins=10,arr=[];for(var b=0;b<bins;b++)arr.push({pts:[],pts2:[],a:0,n:0});
+ var made=0,guard=0;while(made<nb&&guard++<1e5){var a=2.06+RN()*1.25;var pdf=Math.exp(-Math.pow((a-2.72)/0.33,2));if(RN()>pdf)continue;
+  var bad=false;for(var g=0;g<GAPS.length;g++)if(Math.abs(a-GAPS[g][0])<GAPS[g][1]*(0.6+RN()*0.8))bad=true;if(bad)continue;
+  var e=RN()*0.16,M=RN()*TAU,rr=a*(1-e*Math.cos(M)),th=RN()*TAU;var bi=Math.min(bins-1,Math.floor((a-2.06)/1.25*bins));
+  var B=arr[bi];(RN()<0.1?B.pts2:B.pts).push(rr*Math.cos(th),-rr*Math.sin(th));B.a+=a;B.n++;made++;}
+ arr.forEach(function(B){if(!B.n)return;var g=el('g',{},beltOuter);dotPath(g,B.pts,'#b7a58c',1.3,0.55);dotPath(g,B.pts2,'#e0d2bc',1.9,0.75);beltAnn.push({g:g,a:B.a/B.n});});})();
+// Jupiter trojans (L4/L5, co-rotating with Jupiter)
+var trojG=el('g',{},L.belt);
+(function(){var p=[];for(var i=0;i<(MOBILE?260:480);i++){var side=i%2?1:-1;var th=side*60*D2R+gauss(RN)*0.2,r=5.2+gauss(RN)*0.17;p.push(r*Math.cos(th),-r*Math.sin(th));}dotPath(trojG,p,'#a9b48c',1.2,0.55);})();
+// Kuiper belt + scattered disk
+var kuiperOuter=el('g',{},L.kuiper),kuiperAnn=[];
+(function(){var bins=[[30,39],[39,40],[40,44],[44,48],[48,70],[70,110]],cnt=MOBILE?[100,320,320,800,150,100]:[200,600,600,1700,300,200];
+ bins.forEach(function(bn,bi){var p=[],sum=0;for(var i=0;i<cnt[bi];i++){var a,e;if(bi==1){a=39.3+RN()*0.4;e=RN()*0.28;}else if(bi>=4){a=bn[0]+RN()*(bn[1]-bn[0]);e=0.1+RN()*0.35;}else{a=bn[0]+RN()*(bn[1]-bn[0]);e=RN()*0.1;}
+  var M=RN()*TAU,rr=a*(1-e*Math.cos(M)),th=RN()*TAU;p.push(rr*Math.cos(th),-rr*Math.sin(th));sum+=a;}
+  var g=el('g',{},kuiperOuter);dotPath(g,p,bi==1?'#b8c2e0':'#95a9d0',bi>=4?1.2:1.4,bi>=4?0.5:0.7);kuiperAnn.push({g:g,a:sum/cnt[bi]});});})();
+// Oort cloud (units: 1000 AU), projected sphere
+var oortG=el('g',{},L.oort);
+el('circle',{r:100,fill:'url(#gOort)'},oortG);
+(function(){var p=[],p2=[],n=MOBILE?1400:2800;for(var i=0;i<n;i++){var inner=RN()<0.35;var r=inner?2+Math.pow(RN(),1.3)*18:3+Math.pow(RN(),0.55)*97;
+  var u=RN()*2-1,th=RN()*TAU;var flat=inner?0.45:1;var s=Math.sqrt(1-u*u);var x=r*s*Math.cos(th),y=r*s*Math.sin(th);if(inner){y*=1;}
+  (RN()<0.15?p2:p).push(x,y*(inner?1:1));}
+ dotPath(oortG,p,'#9fb6e6',1.1,0.5);dotPath(oortG,p2,'#dbe6ff',1.6,0.7);})();
+// heliosphere (units AU): nose towards ecliptic longitude 255 deg
+var helioG=el('g',{},L.helio);var HNOSE=255*D2R;
+function helioPath(R0,k,pw){var s='';for(var i=0;i<=120;i++){var ph=i/120*TAU;var f=1+k*Math.pow((1-Math.cos(ph))/2,pw);var r=R0*f;var ang=HNOSE+ph;var x=r*Math.cos(ang),y=-r*Math.sin(ang);s+=(i?'L':'M')+x.toFixed(2)+' '+y.toFixed(2);}return s+'Z';}
+el('path',{d:helioPath(121,2.2,1.8),fill:'#3f7fe0','fill-opacity':0.06,stroke:'#7fb4ff','stroke-width':14,'stroke-opacity':0.07},helioG);
+el('path',{d:helioPath(121,2.2,1.8),fill:'none',stroke:'#8fc0ff','stroke-width':1.3,'stroke-opacity':0.6,'vector-effect':'non-scaling-stroke'},helioG);
+el('path',{d:helioPath(90,0.6,1.5),fill:'#4a8cff','fill-opacity':0.04,stroke:'#a0c8ff','stroke-width':1,'stroke-opacity':0.5,'stroke-dasharray':'5 5','vector-effect':'non-scaling-stroke'},helioG);
+// ---------- galaxy (units: 1000 ly, GC at origin, Sun at (-26,0)) ----------
+var galG=el('g',{},L.galaxy);var galLabels=[];
+(function(){var r=mulberry(777);el('circle',{r:58,fill:'url(#gGDisk)'},galG);
+ var pitch=13*D2R,tp=Math.tan(pitch);
+ function armTh(k,rr){return PI+k*PI/2-Math.log(rr/21)/tp;}
+ var arms=[{k:0,n:'人马臂',maj:0},{k:1,n:'英仙臂',maj:1},{k:2,n:'矩尺臂 / 外臂',maj:0},{k:3,n:'盾牌-半人马臂',maj:1}];
+ // star-cloud blobs along the arms
+ el('circle',{r:24,fill:'url(#gInner)'},galG);
+ arms.forEach(function(A){var r0=A.maj?10.5:7.5;for(var rr=r0;rr<=51;rr+=A.maj?0.55:0.8){var th=armTh(A.k,rr)+gauss(r)*0.035,th2=armTh(A.k,rr+0.6);
+   var x=rr*Math.cos(th),y=rr*Math.sin(th),x2=(rr+0.6)*Math.cos(th2),y2=(rr+0.6)*Math.sin(th2),ang=Math.atan2(y2-y,x2-x)*R2D;
+   var fade=Math.min(1,(rr-r0+2)/6)*(rr>44?Math.max(0,(51-rr)/7):1);var rx=(1.8+rr*0.05)*(0.7+r()*0.7);
+   el('ellipse',{cx:x.toFixed(2),cy:y.toFixed(2),rx:rx.toFixed(2),ry:(rx*(0.45+r()*0.25)).toFixed(2),fill:rr<16?'url(#gArmW)':'url(#gArm)',opacity:((A.maj?0.95:0.6)*fade*(0.55+r()*0.45)).toFixed(2),transform:'rotate('+ang.toFixed(1)+' '+x.toFixed(2)+' '+y.toFixed(2)+')'},galG);
+   if(r()<0.09){var hx=x+gauss(r)*0.8,hy=y+gauss(r)*0.8;el('circle',{cx:hx.toFixed(2),cy:hy.toFixed(2),r:(0.35+r()*0.45).toFixed(2),fill:'url(#gHII)'},galG);}}});
+ // bar + bulge
+ el('ellipse',{rx:14,ry:5,fill:'url(#gBar)',transform:'rotate(-27)'},galG);el('ellipse',{rx:9,ry:3.2,fill:'url(#gBar)',transform:'rotate(-27)'},galG);
+ var pts={blue:[],white:[],pink:[],dust:[],old:[],big:[]};
+ var N=MOBILE?1700:3200;
+ for(var i=0;i<N;i++){var A=arms[i%4];var rr=(A.maj?10.5:7.5)+Math.pow(r(),0.8)*(A.maj?40:43);if(!A.maj&&r()<0.35)continue;
+  var th=armTh(A.k,rr)+gauss(r)*0.09,rj=rr+gauss(r)*(0.7+rr*0.02);var x=rj*Math.cos(th),y=rj*Math.sin(th);
+  var q=r();if(q<0.07)pts.pink.push(x,y);else if(q<0.45)pts.blue.push(x,y);else if(q<0.52)pts.big.push(x,y);else pts.white.push(x,y);
+  if(r()<0.35){var th2=armTh(A.k,rr)+0.07+gauss(r)*0.02,rd=rr-0.6;pts.dust.push(rd*Math.cos(th2),rd*Math.sin(th2));}}
+ for(var j=0;j<(MOBILE?700:1300);j++){var rr2=-Math.log(1-r()*0.97)*11;if(rr2>52)continue;var th3=r()*TAU;pts.old.push(rr2*Math.cos(th3),rr2*Math.sin(th3));}
+ // Orion spur through the Sun
+ for(var s2=0;s2<(MOBILE?120:220);s2++){var rr3=23.8+r()*4.6,th4=PI-Math.log(rr3/26)/Math.tan(22*D2R)+gauss(r)*0.035,rj3=rr3+gauss(r)*0.5;(r()<0.5?pts.blue:pts.white).push(rj3*Math.cos(th4),rj3*Math.sin(th4));}
+ dotPath(galG,pts.old,'#ffe6c0',1.1,0.35);dotPath(galG,pts.dust,'#1a1008',2.4,0.55);
+ dotPath(galG,pts.white,'#f0f0ff',1.1,0.6);dotPath(galG,pts.blue,'#b8ccff',1.4,0.7);dotPath(galG,pts.big,'#e6eeff',2.1,0.85);dotPath(galG,pts.pink,'#ff8fb8',1.9,0.8);
+ el('circle',{r:11,fill:'url(#gBulge)'},galG);el('circle',{r:4,fill:'url(#gBulge)'},galG);
+ arms.forEach(function(A){var rr=A.k==0?17:(A.k==1?36:(A.k==2?46:31));var th=armTh(A.k,rr);galLabels.push({x:rr*Math.cos(th),y:rr*Math.sin(th),t:A.n});});
+ galLabels.push({x:-27.2,y:3.6,t:'猎户臂（本地臂）',sm:1});
+ galLabels.push({x:0,y:-6.5,t:'银心 · 人马座 A*（约 400 万倍太阳质量的黑洞）',c:1});
+ // Sun's galactic orbit
+ el('circle',{r:26,fill:'none',stroke:'#ffd98a','stroke-width':1,'stroke-opacity':0.35,'stroke-dasharray':'4 6','vector-effect':'non-scaling-stroke'},galG);
+})();
+var galLblEls=galLabels.map(function(g){return el('text',{'class':'lbl gl'+(g.c?' glc':''),'text-anchor':'middle'},L.labels);});
+galLabels.forEach(function(g,i){txt(galLblEls[i],g.t);});
+// ---------- light-time reference rings ----------
+var ringEls=RINGS.map(function(R){return {r:R[0],t:R[1],p:el('path',{fill:'none',stroke:'#63d2ff','stroke-width':1,'stroke-dasharray':'2 6',opacity:0},L.rings),l:el('text',{'class':'lbl rl','text-anchor':'middle'},L.rings)};});
+ringEls.forEach(function(R){txt(R.l,R.t);});
+var lsRing=el('circle',{fill:'none',stroke:'#63d2ff','stroke-width':1,'stroke-dasharray':'2 5',opacity:0},L.rings);
+var lsLbl=el('text',{'class':'lbl rl','text-anchor':'middle'},L.rings);txt(lsLbl,'1 光秒（29.98 万千米）');
+// ---------- orbits ----------
+PL.forEach(function(p){p.orb=el('path',{fill:'none',stroke:p.oc,'stroke-width':p.dwarf?1:1.15,opacity:0,'stroke-dasharray':p.dwarf?'4 4':'none'},L.orbits);});
+COMETS.forEach(function(c){c.orb=el('path',{fill:'none',stroke:'#7fd8ff','stroke-width':0.9,'stroke-dasharray':'1 4',opacity:0},L.orbits);
+ var o=mkOrbit(c.a,c.e,c.i*D2R,c.O*D2R,c.w*D2R);c.o=o;c.P=365.25*Math.pow(c.a,1.5);});
+MOONS.forEach(function(m){m.orb=el('circle',{fill:'none',stroke:'#8fa4c8','stroke-width':0.8,opacity:0},L.orbits);});
+// ---------- bodies ----------
+function mkIcon(b,parent){
+ var g=el('g',{},parent);
+ if(b.rings){var rb=el('g',{transform:'rotate('+b.tilt+') scale(1,'+b.rk+')'},g);var u=use(b.rings,rb);u.setAttribute('clip-path','url(#cBack)');}
+ var bd=el('g',{transform:'rotate('+b.tilt+')'},g);use(b.surf,bd);
+ el('circle',{r:100,fill:'url(#gLimb)'},g);
+ var sh=el('g',{},g);el('circle',{r:100.6,fill:'url(#gTerm)'},sh);el('circle',{cx:-44,r:40,fill:'url(#gSpec)'},sh);
+ if(b.atmo)el('circle',{r:107,fill:'url(#'+b.atmo+')'},g);
+ if(b.rings){var rf=el('g',{transform:'rotate('+b.tilt+') scale(1,'+b.rk+')'},g);var u2=use(b.rings,rf);u2.setAttribute('clip-path','url(#cFront)');
+  if(b.k==='saturn'){var rs=el('g',{},rf);b.ringShade=rs;}}
+ return {g:g,sh:sh};}
+function mkBody(b,col){
+ var ic=mkIcon(b,L.bodies);b.g=ic.g;b.sh=ic.sh;
+ b.dot=el('circle',{r:1,fill:col||b.lc||'#fff'},L.bodies);
+ b.mk=el('circle',{r:8,fill:'none',stroke:col||b.lc||'#fff','stroke-width':1,opacity:0.7},L.bodies);
+ b.lbl=el('text',{'class':'lbl'},L.labels);txt(b.lbl,b.n);}
+PL.forEach(function(p){mkBody(p);});
+MOONS.forEach(function(m){m.tilt=0;mkBody(m,'#d8d8d8');m.lc='#d8d8d8';});
+// Sun
+var sun={k:'sun',n:'太阳',R:695700,lc:'#ffe7a0'};
+var sunHalo=el('g',{},L.sun),sunCorG=el('g',{},L.sun),sunDiskG=el('g',{},L.sun);
+el('circle',{r:100,fill:'url(#gSunHalo)'},sunHalo);
+el('circle',{r:100,fill:'url(#gCorona)'},sunCorG);
+var streamers=el('g',{},sunCorG);
+for(var si=0;si<8;si++){var L2=38+ (si*37%23);el('ellipse',{cx:L2/2+20,cy:0,rx:L2/2+20,ry:5+si%3*2,fill:'url(#gStreamer)',transform:'rotate('+(si*45+si*7)+')'},streamers);}
+el('circle',{r:100,fill:'url(#gSunDisk)'},sunDiskG);
+var granG=el('g',{'clip-path':'url(#c100)',opacity:0.6},sunDiskG);
+(function(){var r=mulberry(9);for(var i=0;i<46;i++){var a=r()*TAU,rr=Math.sqrt(r())*88;el('circle',{cx:(rr*Math.cos(a)).toFixed(1),cy:(rr*Math.sin(a)).toFixed(1),r:(4+r()*7).toFixed(1),fill:'url(#gGran)'},granG);}})();
+var spotG=el('g',{'clip-path':'url(#c100)'},sunDiskG);var spots=[];
+[[20,15,7],[35,18,5],[140,-12,8],[150,-16,4],[250,10,6],[300,-22,5]].forEach(function(s){spots.push({lon:s[0]*D2R,lat:s[1]*D2R,sz:s[2],e:el('ellipse',{fill:'url(#gSpot)'},spotG)});});
+el('circle',{r:100,fill:'url(#gLimb)',opacity:0.6},sunDiskG);
+var sunLbl=el('text',{'class':'lbl sunl'},L.labels);txt(sunLbl,'太阳');
+var sunPulse=el('circle',{r:30,fill:'none',stroke:'#7fe0ff','stroke-width':1.5,opacity:0},L.labels);
+var sunPulse2=el('circle',{r:30,fill:'none',stroke:'#7fe0ff','stroke-width':1,opacity:0},L.labels);
+// comets
+COMETS.forEach(function(c){c.tailG=el('g',{},L.comets);c.dust=el('path',{fill:'url(#gDust)'},c.tailG);c.ion=el('path',{fill:'url(#gIon)'},c.tailG);
+ c.coma=el('circle',{r:4,fill:'url(#gComa)'},L.comets);c.nuc=el('circle',{r:1,fill:'#fff'},L.comets);c.lbl=el('text',{'class':'lbl cl'},L.labels);txt(c.lbl,c.n);});
+// spacecraft
+CRAFT.forEach(function(c){var le=radec2ecl(c.ra,c.dec);c.lam=le[0];c.bet=le[1];
+ c.line=el('line',{stroke:c.col,'stroke-width':1,'stroke-dasharray':'3 5',opacity:0.5},L.craft);
+ c.g=el('g',{},L.craft);el('path',{d:'M0 -5L5 0L0 5L-5 0Z',fill:c.col},c.g);el('path',{d:'M-9 0H9',stroke:c.col,'stroke-width':1},c.g);
