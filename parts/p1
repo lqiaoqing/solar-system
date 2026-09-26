@@ -1,0 +1,143 @@
+<g fill="none" stroke="#a87c40" stroke-width="8" opacity=".2"><path d="M-90 -15 Q0 -35 90 -10"/><path d="M-80 28 Q10 10 100 30"/><path d="M-60 -70 Q10 -85 70 -65"/></g></g></g>
+<g id="s-earth"><g clip-path="url(#c100)"><circle r="100" fill="url(#gOcean)"/>
+<path id="earthLand" fill="url(#gLand)" d=""/>
+<ellipse cx="0" cy="-99" rx="55" ry="14" fill="#f4f8fb" opacity=".9"/><ellipse cx="0" cy="99" rx="70" ry="16" fill="#f4f8fb" opacity=".95"/>
+<g fill="url(#gCloud)"><ellipse cx="-60" cy="-55" rx="34" ry="15" opacity="0.84" transform="rotate(-8 -60 -55)"/><ellipse cx="-20" cy="-62" rx="28" ry="14" opacity="0.72" transform="rotate(5 -20 -62)"/><ellipse cx="35" cy="-50" rx="36" ry="16" opacity="0.77" transform="rotate(-4 35 -50)"/><ellipse cx="70" cy="-30" rx="22" ry="14" opacity="0.67" transform="rotate(10 70 -30)"/><ellipse cx="-75" cy="-10" rx="24" ry="14" opacity="0.72" transform="rotate(15 -75 -10)"/><ellipse cx="-30" cy="5" rx="18" ry="13" opacity="0.60" transform="rotate(-10 -30 5)"/><ellipse cx="20" cy="15" rx="32" ry="15" opacity="0.72" transform="rotate(6 20 15)"/><ellipse cx="60" cy="30" rx="26" ry="14" opacity="0.72" transform="rotate(-12 60 30)"/><ellipse cx="-55" cy="40" rx="36" ry="15" opacity="0.82" transform="rotate(8 -55 40)"/><ellipse cx="0" cy="55" rx="30" ry="14" opacity="0.72" transform="rotate(-5 0 55)"/><ellipse cx="45" cy="65" rx="28" ry="14" opacity="0.72" transform="rotate(4 45 65)"/><ellipse cx="-15" cy="-30" rx="16" ry="13" opacity="0.53" transform="rotate(20 -15 -30)"/><ellipse cx="10" cy="-85" rx="36" ry="14" opacity="0.84" transform="rotate(0 10 -85)"/><ellipse cx="-40" cy="80" rx="34" ry="14" opacity="0.84" transform="rotate(3 -40 80)"/><ellipse cx="85" cy="5" rx="16" ry="13" opacity="0.60" transform="rotate(30 85 5)"/></g></g></g>
+<g id="s-moon"><g clip-path="url(#c100)"><circle r="100" fill="url(#gMoon)"/>
+<g fill="#76726d" opacity=".55"><ellipse cx="-25" cy="-30" rx="30" ry="22"/><ellipse cx="18" cy="-38" rx="20" ry="16"/><ellipse cx="30" cy="-5" rx="18" ry="14"/><ellipse cx="-45" cy="15" rx="22" ry="30"/><ellipse cx="5" cy="15" rx="12" ry="10"/><ellipse cx="-10" cy="45" rx="10" ry="8"/></g>
+<g fill="#f0eee8" opacity=".5"><circle cx="-5" cy="72" r="6"/><circle cx="-40" cy="-2" r="3"/></g></g></g>
+<g id="s-mars"><g clip-path="url(#c100)"><circle r="100" fill="url(#gMars)"/>
+<g fill="#6b2a14" opacity=".45"><path d="M-40 -10 q20 -30 45 -18 q20 12 5 40 q-15 25 -30 10 q-10 -12 -20 -32z"/><path d="M20 20 q40 -10 70 10 q-10 20 -40 18 q-25 -2 -30 -28z"/><path d="M-100 30 q30 -15 60 5 q-30 20 -60 10z"/><ellipse cx="50" cy="-35" rx="25" ry="8"/></g>
+<ellipse cx="0" cy="-96" rx="45" ry="16" fill="#fbf6f0" opacity=".92"/><ellipse cx="0" cy="98" rx="28" ry="8" fill="#fbf6f0" opacity=".7"/></g></g>
+<g id="s-jupiter"><g clip-path="url(#c100)"><rect x="-100" y="-100" width="200" height="200" fill="url(#gJup)"/>
+<g fill="none" stroke="#fff6e6" stroke-width="2" opacity=".35"><path d="M-100 -8 q25 5 50 0 t50 0 t50 0 t50 0"/><path d="M-100 12 q25 -4 50 0 t50 0 t50 0 t50 0"/></g>
+<g fill="none" stroke="#8a5534" stroke-width="2.5" opacity=".35"><path d="M-100 -24 q20 4 40 0 t40 0 t40 0 t40 0 t40 0"/><path d="M-100 20 q20 -4 40 0 t40 0 t40 0 t40 0 t40 0"/></g>
+<g id="grs"><ellipse rx="16" ry="8.5" fill="#c2653e" opacity=".92"/><ellipse rx="11" ry="5.5" fill="#d9825a" opacity=".85"/><ellipse rx="19" ry="11" fill="none" stroke="#f3e7d6" stroke-width="2.5" opacity=".6"/></g></g></g>
+<g id="s-saturn"><g clip-path="url(#c100)"><rect x="-100" y="-100" width="200" height="200" fill="url(#gSat)"/>
+<g fill="none" stroke="#fff4d8" stroke-width="3" opacity=".25"><path d="M-100 -12 q50 6 100 0 t100 0"/><path d="M-100 18 q50 -6 100 0 t100 0"/></g></g></g>
+<g id="s-uranus"><g clip-path="url(#c100)"><circle r="100" fill="url(#gUra)"/><g fill="none" stroke="#e8fbff" stroke-width="10" opacity=".12"><path d="M-100 -30 H100"/><path d="M-100 35 H100"/></g></g></g>
+<g id="s-neptune"><g clip-path="url(#c100)"><circle r="100" fill="url(#gNep)"/>
+<g fill="none" stroke="#8fb0ff" stroke-width="6" opacity=".22"><path d="M-100 -40 q50 8 100 0 t100 0"/><path d="M-100 45 q50 -8 100 0 t100 0"/></g>
+<ellipse cx="-20" cy="28" rx="16" ry="8" fill="#16215e" opacity=".75"/><path d="M-10 18 q20 -6 40 2" stroke="#fff" stroke-width="4" fill="none" opacity=".75" stroke-linecap="round"/><path d="M30 -30 q15 -4 30 2" stroke="#fff" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"/></g></g>
+<g id="s-pluto"><g clip-path="url(#c100)"><circle r="100" fill="url(#gPlu)"/>
+<path d="M-60 60 Q-100 30 -80 10 Q-100 -10 -60 -10 Q-50 20 -30 70 Z" fill="#5e3f30" opacity=".7"/><path d="M20 0 q15 -30 40 -18 q20 -20 38 5 q5 35 -45 70 q-40 -25 -33 -57z" fill="#f6ece0" opacity=".9"/></g></g>
+<g id="s-io"><g clip-path="url(#c100)"><circle r="100" fill="#ecd56a"/><g fill="#c97a2a" opacity=".6"><circle cx="-30" cy="-20" r="14"/><circle cx="35" cy="25" r="10"/><circle cx="10" cy="-55" r="8"/><circle cx="-45" cy="45" r="9"/></g><circle cx="15" cy="5" r="18" fill="#fff4c0" opacity=".45"/></g></g>
+<g id="s-europa"><g clip-path="url(#c100)"><circle r="100" fill="#efe6d6"/><g stroke="#9a6a44" stroke-width="4" fill="none" opacity=".55"><path d="M-100 -30 L100 40"/><path d="M-80 60 L90 -50"/><path d="M-30 -100 L20 100"/></g></g></g>
+<g id="s-ganymede"><g clip-path="url(#c100)"><circle r="100" fill="#b2a898"/><g fill="#6d6457" opacity=".6"><path d="M-80 -40 q40 -30 90 -10 q-20 40 -90 30z"/><path d="M0 30 q50 -10 90 20 q-40 30 -90 10z"/></g></g></g>
+<g id="s-callisto"><g clip-path="url(#c100)"><circle r="100" fill="#6a6158"/><g fill="#d8d0c4" opacity=".5"><circle cx="-30" cy="-20" r="6"/><circle cx="25" cy="30" r="5"/><circle cx="40" cy="-40" r="4"/><circle cx="-50" cy="40" r="4"/><circle cx="0" cy="0" r="3"/></g></g></g>
+<g id="s-titan"><g clip-path="url(#c100)"><circle r="100" fill="#dba24a"/><ellipse cx="0" cy="-90" rx="80" ry="25" fill="#8a6a3a" opacity=".5"/></g></g>
+<g id="s-triton"><g clip-path="url(#c100)"><circle r="100" fill="#e2cfc4"/><ellipse cx="0" cy="60" rx="90" ry="45" fill="#f4e4dc" opacity=".8"/></g></g>
+<g id="s-charon"><g clip-path="url(#c100)"><circle r="100" fill="#a29b96"/><ellipse cx="0" cy="-92" rx="55" ry="22" fill="#7a4a36" opacity=".7"/></g></g>
+<!-- Saturn rings (ring-local, planet radius 100) -->
+<g id="ringsSat" fill="none">
+<circle r="138" stroke="#8d7b5c" stroke-width="29" opacity=".35"/>
+<circle r="163" stroke="#d8c392" stroke-width="20" opacity=".85"/>
+<circle r="184" stroke="#efdcae" stroke-width="22" opacity=".95"/>
+<circle r="175" stroke="#c9b27e" stroke-width="2" opacity=".6"/>
+<circle r="199" stroke="#000" stroke-width="7" opacity=".0"/>
+<circle r="212" stroke="#d2bd8c" stroke-width="17" opacity=".78"/>
+<circle r="224" stroke="#c6b182" stroke-width="6" opacity=".7"/>
+<circle r="222" stroke="#1a1510" stroke-width="1.2" opacity=".6"/>
+</g>
+<g id="ringsUra" fill="none"><circle r="160" stroke="#b0c8d0" stroke-width="1.5" opacity=".18"/><circle r="200" stroke="#d8e8ee" stroke-width="2.5" opacity=".3"/></g>
+<clipPath id="cBack"><rect x="-300" y="-300" width="600" height="300"/></clipPath>
+<clipPath id="cFront"><rect x="-300" y="0" width="600" height="300"/></clipPath>
+</defs>
+
+<script><![CDATA[
+(function(){
+'use strict';
+var NS='http://www.w3.org/2000/svg', XL='http://www.w3.org/1999/xlink';
+var root=document.getElementById('solarRoot');
+var PI=Math.PI, TAU=2*PI, D2R=PI/180, R2D=180/PI;
+var AU_KM=149597870.7, LY_AU=63241.077, LT_S=499.00478; // light seconds per AU
+var J2000MS=946728000000;
+var ZMIN=-3.9, ZMAX=9.6;
+var UA=navigator.userAgent||'';
+var MOBILE=/Android|iPhone|iPad|iPod|Mobile|MicroMessenger|HarmonyOS/i.test(UA);
+var DESKTOP_FX=!MOBILE;
+// ---------- helpers ----------
+function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);if(attrs)for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function use(id,parent,attrs){var u=el('use',attrs||{},parent);u.setAttribute('href','#'+id);u.setAttributeNS(XL,'xlink:href','#'+id);return u;}
+function sa(e,k,v){var c=e._c||(e._c={});if(c[k]===v)return;if(typeof v==='string'&&v.indexOf('NaN')>=0)return;if(typeof v==='number'&&!isFinite(v))return;c[k]=v;e.setAttribute(k,v);}
+function vis(e,b){sa(e,'display',b?'inline':'none');}
+function txt(e,s){if(e._t!==s){e._t=s;e.textContent=s;}}
+function clamp(x,a,b){return x<a?a:(x>b?b:x);}
+function lerp(a,b,t){return a+(b-a)*t;}
+function sstep(a,b,x){var t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);}
+function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+function f1(x){return (Math.round(x*10)/10).toFixed(1);}
+function f2(x){return (Math.round(x*100)/100).toFixed(2);}
+function wrapA(a){a%=TAU;return a<0?a+TAU:a;}
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gauss(r){var u=r()||1e-9,v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+function comma(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function cnNum(n,unit){ // Chinese large-number formatting
+  function p3(v){return v>=100?comma(v):trimz(v.toPrecision(3));}
+  if(n>=1e16)return p3(n/1e16)+' 亿亿'+unit;
+  if(n>=1e12)return p3(n/1e12)+' 万亿'+unit;
+  if(n>=1e8)return p3(n/1e8)+' 亿'+unit;
+  if(n>=1e4)return p3(n/1e4)+' 万'+unit;
+  return comma(n)+' '+unit;}
+function trimz(s){return s.indexOf('.')>=0?s.replace(/\.?0+$/,''):s;}
+function fmtDist(au){
+  if(!(au>=0))return '—';
+  if(au<0.02)return cnNum(au*AU_KM,'千米');
+  if(au<10)return f2(au)+' AU';
+  if(au<1000)return f1(au)+' AU';
+  if(au<30000)return comma(au)+' AU';
+  var ly=au/LY_AU;
+  if(ly<10)return f2(ly)+' 光年';
+  if(ly<1000)return f1(ly)+' 光年';
+  return cnNum(ly,'光年');}
+function fmtLight(au){
+  var s=au*LT_S;
+  if(s<60)return (s<10?f2(s):f1(s))+' 秒';
+  if(s<3600){var m=Math.floor(s/60),ss=Math.round(s-m*60);if(ss==60){m++;ss=0;}return m+' 分 '+ss+' 秒';}
+  if(s<86400*3)return f1(s/3600)+' 小时';
+  if(s<86400*364.5)return Math.round(s/86400)+' 天';
+  var y=au/LY_AU; if(y<100)return f2(y)+' 年'; return cnNum(y,'年');}
+
+// ---------- orbital mechanics ----------
+// JPL approximate Keplerian elements (1800-2050), a e I L varpi Omega + rates per Julian century
+var EL={
+ mercury:[0.38709927,0.00000037,0.20563593,0.00001906,7.00497902,-0.00594749,252.25032350,149472.67411175,77.45779628,0.16047689,48.33076593,-0.12534081],
+ venus:[0.72333566,0.00000390,0.00677672,-0.00004107,3.39467605,-0.00078890,181.97909950,58517.81538729,131.60246718,0.00268329,76.67984255,-0.27769418],
+ emb:[1.00000261,0.00000562,0.01671123,-0.00004392,-0.00001531,-0.01294668,100.46457166,35999.37244981,102.93768193,0.32327364,0,0],
+ mars:[1.52371034,0.00001847,0.09339410,0.00007882,1.84969142,-0.00813131,-4.55343205,19140.30268499,-23.94362959,0.44441088,49.55953891,-0.29257343],
+ jupiter:[5.20288700,-0.00011607,0.04838624,-0.00013253,1.30439695,-0.00183714,34.39644051,3034.74612775,14.72847983,0.21252668,100.47390909,0.20469106],
+ saturn:[9.53667594,-0.00125060,0.05386179,-0.00050991,2.48599187,0.00193609,49.95424423,1222.49362201,92.59887831,-0.41897216,113.66242448,-0.28867794],
+ uranus:[19.18916464,-0.00196176,0.04725744,-0.00004397,0.77263783,-0.00242939,313.23810451,428.48202785,170.95427630,0.40805281,74.01692503,0.04240589],
+ neptune:[30.06992276,0.00026291,0.00859048,0.00005105,1.77004347,0.00035372,-55.12002969,218.45945325,44.96476227,-0.32241464,131.78422574,-0.00508664],
+ pluto:[39.48211675,-0.00031596,0.24882730,0.00005170,17.14001206,0.00004818,238.92903833,145.20780515,224.06891629,-0.04062942,110.30393684,-0.01183482]
+};
+function kepE(M,e){M=wrapA(M);var E=e<0.8?M:PI;for(var i=0;i<40;i++){var d=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));E-=d;if(Math.abs(d)<1e-12)break;}return E;}
+// orbit object: {a,e,i,O,w} radians; returns fn(E)->[x,y]
+function mkOrbit(a,e,I,O,w){var cO=Math.cos(O),sO=Math.sin(O),cw=Math.cos(w),sw=Math.sin(w),cI=Math.cos(I);
+ return {a:a,e:e,b:a*Math.sqrt(1-e*e),
+  Px:cw*cO-sw*sO*cI,Qx:-sw*cO-cw*sO*cI,Py:cw*sO+sw*cO*cI,Qy:-sw*sO+cw*cO*cI};}
+function orbXY(o,E,out){var xp=o.a*(Math.cos(E)-o.e),yp=o.b*Math.sin(E);out[0]=o.Px*xp+o.Qx*yp;out[1]=o.Py*xp+o.Qy*yp;return out;}
+function planetState(k,T){var p=EL[k];var a=p[0]+p[1]*T,e=p[2]+p[3]*T,I=(p[4]+p[5]*T)*D2R,L=(p[6]+p[7]*T)*D2R,vp=(p[8]+p[9]*T)*D2R,O=(p[10]+p[11]*T)*D2R;
+ var o=mkOrbit(a,e,I,O,vp-O);var E=kepE(L-vp,e);o.E=E;return o;}
+function radec2ecl(raDeg,decDeg){var eps=23.4393*D2R,a=raDeg*D2R,d=decDeg*D2R;
+ var lam=Math.atan2(Math.sin(a)*Math.cos(eps)+Math.tan(d)*Math.sin(eps),Math.cos(a));
+ var bet=Math.asin(Math.sin(d)*Math.cos(eps)-Math.cos(d)*Math.sin(eps)*Math.sin(a));return [lam,bet];}
+function hms(h,m,s){return (h+m/60+(s||0)/3600)*15;}
+function dms(d,m){return d<0||(d===0&&m<0)?d-m/60:d+m/60;}
+// ---------- data ----------
+var RE=6371.0;
+var PL=[ // planets & dwarf
+ {k:'mercury',n:'水星',R:2439.7,tilt:0.03,surf:'s-mercury',oc:'#9a948c',lc:'#d6d0c8',
+  info:[['类型','类地行星'],['直径','4,879 千米（地球的 0.38 倍）'],['平均距离','0.387 AU（5,791 万千米）'],['公转周期','88.0 天'],['自转周期','58.6 天'],['卫星','0'],['轨道偏心率','0.206（八大行星中最大）']],
+  fact:'离太阳最近的行星，没有大气保温，表面温度在约 −180 °C 到 430 °C 之间剧烈变化。'},
+ {k:'venus',n:'金星',R:6051.8,tilt:177.4,surf:'s-venus',atmo:'gAtmoV',oc:'#c9a86a',lc:'#f3dfb0',
+  info:[['类型','类地行星'],['直径','12,104 千米（地球的 0.95 倍）'],['平均距离','0.723 AU（1.082 亿千米）'],['公转周期','224.7 天'],['自转周期','243 天（逆向自转）'],['卫星','0'],['表面温度','约 465 °C']],
+  fact:'浓厚的二氧化碳大气造成失控温室效应，是太阳系最热的行星；它的一“天”比一“年”还长。'},
+ {k:'earth',n:'地球',R:6371.0,tilt:23.44,surf:'s-earth',atmo:'gAtmoE',oc:'#4f8fe0',lc:'#bfe0ff',
+  info:[['类型','类地行星'],['直径','12,742 千米'],['平均距离','1.000 AU（1.496 亿千米）'],['公转周期','365.26 天'],['自转周期','23 小时 56 分'],['卫星','1（月球）'],['轴倾角','23.44°']],
+  fact:'我们的家园，目前已知唯一存在生命的星球。阳光从太阳到这里需要约 8 分 19 秒。'},
+ {k:'mars',n:'火星',R:3389.5,tilt:25.19,surf:'s-mars',oc:'#c8643e',lc:'#ffb99a',
+  info:[['类型','类地行星'],['直径','6,779 千米（地球的 0.53 倍）'],['平均距离','1.524 AU（2.279 亿千米）'],['公转周期','687 天'],['自转周期','24 小时 37 分'],['卫星','2（火卫一、火卫二）'],['轴倾角','25.19°']],
+  fact:'红色来自表面的氧化铁。奥林帕斯山高约 22 千米，是太阳系已知最高的火山。'},
+ {k:'jupiter',n:'木星',R:69911,tilt:3.13,surf:'s-jupiter',oc:'#c9a47c',lc:'#f5dcc0',
+  info:[['类型','气态巨行星'],['直径','139,820 千米（地球的 11 倍）'],['平均距离','5.203 AU（7.78 亿千米）'],['公转周期','11.86 年'],['自转周期','9 小时 56 分'],['已知卫星','115 颗（截至 2026 年）'],['质量','地球的 318 倍']],
