@@ -1,0 +1,139 @@
+ txt(hud.sT,lab);sa(hud.sT,'x',PAD);sa(hud.sT,'y',f1(y-9));txt(hud.sL,'光行 '+fmtLight(nAU));sa(hud.sL,'x',f1(PAD+bl+8));sa(hud.sL,'y',f1(y+1));
+ // enlargement notes
+ txt(hud.n1,z>4.6?'距离：真实比例；恒星按真实距离沿黄经方向投影':'距离：轨道大小、偏心率与近日点方向均为真实比例');
+ if(S.trueSize)txt(hud.n2,'天体大小：真实比例（×1）——行星几乎小到看不见，外圈为位置标记');
+ else{var kE=dispR(RE,z)/(RE/AU_KM*sc),kJ=dispR(69911,z)/(69911/AU_KM*sc),kS=sunDisp(z)/(695700/AU_KM*sc);
+  txt(hud.n2,(kE<1.05?'天体大小：地球为真实大小':'天体放大：地球 ×'+fmtK(kE)+' · 木星 ×'+fmtK(kJ)+' · 太阳 ×'+fmtK(kS))+'（按“真实大小”可切换）');}
+ // gauge marker
+ var gm=gy(z);sa(hud.gMark,'d','M'+f1(gauge.x+4)+' '+f1(gm)+'l9 -6v12z');
+ hud.gTicks.forEach(function(t,i){sa(t.g,'opacity',i===li?1:0.55);});
+ // button states
+ sa(BT.pause.ic,'d',S.paused?IC.play:IC.pause);sa(BT.jr.ic,'d',S.journey?IC.pause:IC.play);setOnQ(BT.jr,S.journey);setOnQ(BT.rev,S.dir<0);setOnQ(BT.pause,S.paused);
+ setOnQ(BT.lab,S.labels);setOnQ(BT.orb,S.orbits);setOnQ(BT.tru,S.trueSize);setOnQ(BT.cmp,S.compare);
+ vis(BT.ctr.g,!!S.follow||Math.hypot(S.panX,S.panY)*sc>40);
+ var ho=S.hintT===0?clamp((16000-performance.now())/1500,0,1):clamp(1-(performance.now()-S.hintT)/1500,0,1);vis(hud.hint,ho>0.01);sa(hud.hint,'opacity',ho.toFixed(2));
+ // selection ring & card live data
+ var sv=null;if(S.sel)for(var i=0;i<visList.length;i++)if(visList[i].k===S.sel)sv=visList[i];
+ vis(hud.selRing,!!sv);if(sv){sa(hud.selRing,'cx',f1(sv.x));sa(hud.selRing,'cy',f1(sv.y));sa(hud.selRing,'r',f1(sv.r+6));}
+ if(S.sel&&(S.frame%12===0))updateCardLive();
+}
+function setOnQ(b,on){if(b.on!==on)setOn(b,on);}
+function fmtK(k){return k<10?trimz(k.toFixed(1)):(k<1e5?comma(k):cnNum(k,''));}
+// ---------- info card ----------
+function bodyDef(k){if(k==='sun')return {n:'太阳',info:SUNINFO.info,fact:SUNINFO.fact,sun:1,R:695700};
+ if(PLK[k])return PLK[k];for(var i=0;i<MOONS.length;i++)if(MOONS[i].k===k)return MOONS[i];
+ for(i=0;i<COMETS.length;i++)if(COMETS[i].k===k)return COMETS[i];for(i=0;i<CRAFT.length;i++)if(CRAFT[i].k===k)return CRAFT[i];
+ if(k.indexOf('star:')===0){var n=k.slice(5);for(i=0;i<NST.length;i++)if(NST[i].n===n)return NST[i];}return null;}
+function showCard(k,relayout){var b=bodyDef(k);if(!b)return;S.sel=k;var g=card.g;vis(g,true);
+ var cw=NARROW?W-2*PAD:340,x0=16,cfs=NARROW?12.5:13;
+ while(card.icon.firstChild)card.icon.removeChild(card.icon.firstChild);while(card.rows.firstChild)card.rows.removeChild(card.rows.firstChild);
+ var ig=el('g',{transform:'translate(46 46)'},card.icon);
+ if(b.sun){el('circle',{r:34,fill:'url(#gSunHalo)'},ig);el('circle',{r:24,fill:'url(#gSunDisk)'},ig);}
+ else if(b.surf){var ic=mkIcon(b,ig);ic.g.setAttribute('transform','scale('+(b.rings?0.13:0.26)+')');}
+ else if(b.dly){el('circle',{r:26,fill:'url(#'+CLS[b.cls][0]+')'},ig);el('circle',{r:4,fill:CLS[b.cls][1]},ig);}
+ else if(b.o){el('path',{d:'M0 -3L70 -14L70 14L0 3Z',fill:'url(#gIon)',transform:'rotate(-30) scale(.5)'},ig);el('circle',{r:10,fill:'url(#gComa)'},ig);}
+ else{el('path',{d:'M0 -10L10 0L0 10L-10 0Z',fill:b.col||'#9fe6ff'},ig);el('path',{d:'M-20 0H20',stroke:b.col,'stroke-width':2},ig);}
+ txt(card.title,b.n);sa(card.title,'x',86);sa(card.title,'y',40);
+ var info=b.info||[];if(b.dly){info=[['距离',(b.dly<100?b.dly:comma(b.dly))+' 光年'],['约合',cnNum(b.dly*LY_AU,'AU')],['光行时间',(b.dly<100?b.dly:comma(b.dly))+' 年'],['类型',{M:'M 型（红矮星/红超巨星）',K:'K 型（橙色）',G:'G 型（黄色，与太阳同类）',F:'F 型（黄白色）',A:'A 型（白色）',B:'B 型（蓝白色）',N:'星云 / 星团'}[b.cls]]];}
+ if(!b.info&&MOONINFO[k]){var par=PLK[b.p];info=[['所属',par.n],['直径',comma(b.R*2)+' 千米'],['轨道半径',comma(b.d)+' 千米'],['公转周期',Math.abs(b.P)+' 天'+(b.P<0?'（逆行）':'')]];}
+ txt(card.sub,b.dly?'恒星 / 深空天体':(info[0]?info[0][1]:''));sa(card.sub,'x',86);sa(card.sub,'y',62);
+ var y=98,rows=info.slice(b.dly?0:1);rows.forEach(function(r){var t1=el('text',{'class':'crk',x:x0,y:y},card.rows);t1.textContent=r[0];var vl=wrapLines(r[1],cw-x0-96,cfs);var t2=el('text',{'class':'crv'},card.rows);setLines(t2,vl,x0+84,y,cfs*1.35);y+=cfs*1.35*vl.length+5;});
+ card.liveY=y+2;y+=cfs*1.5+4;
+ var fact=b.fact||b.desc||MOONINFO[k]||'';var fl=wrapLines(fact,cw-2*x0,cfs);setLines(card.fact,fl,x0,y+cfs,cfs*1.45);y+=fl.length*cfs*1.45+14;
+ var canFly=!b.dly;vis(card.fly,canFly);if(canFly){card.fly.setAttribute('transform','translate('+x0+' '+y.toFixed(0)+')');y+=44;}else y+=4;
+ txt(card.flyT,S.follow===k?'取消跟随':'飞往并跟随');
+ var ch=y;sa(card.bg,'width',cw);sa(card.bg,'height',f1(ch));card.close.setAttribute('transform','translate('+(cw-40)+' 10)');
+ card.close.firstChild.nextSibling.setAttribute('transform','translate(15 15)');
+ var cx=NARROW?PAD:W-PAD-78-cw,cy=NARROW?Math.max(PAD,ctrlTop-ch-10):Math.min(PAD+FS*5.4,Math.max(PAD,ctrlTop-ch-10));
+ g.setAttribute('transform','translate('+f1(cx)+' '+f1(cy)+')');card.cfs=cfs;updateCardLive();}
+function updateCardLive(){var k=S.sel,b=bodyDef(k);if(!b)return;var s='';
+ if(PLK[k]||COMETS.indexOf(b)>=0||CRAFT.indexOf(b)>=0){var p=POS[k];if(p){var d=Math.hypot(p[0],p[1]);s='此刻距太阳 '+fmtDist(d)+' · 光行 '+fmtLight(d);}}
+ else if(b.p){var pp=POS[b.p],mp=POS[k];var dm=Math.hypot(mp[0]-pp[0],mp[1]-pp[1]);s='此刻距'+PLK[b.p].n+' '+cnNum(dm*AU_KM,'千米');}
+ else if(k==='sun')s='显示放大 ×'+fmtK(sunDisp(S.z)/(695700/AU_KM*sc));
+ if(b.R&&k!=='sun'&&!S.trueSize){var kk=dispR(b.R,S.z)/(b.R/AU_KM*sc);if(b.p&&PLK[b.p])kk=Math.min(dispR(b.R,S.z),PLK[b.p].r*0.45+0.4)/(b.R/AU_KM*sc);s+=(s?' · ':'')+'图标放大 ×'+fmtK(Math.max(kk,1));}
+ txt(card.live,s);sa(card.live,'x',16);sa(card.live,'y',f1(card.liveY+card.cfs));txt(card.flyT,S.follow===k?'取消跟随':'飞往并跟随');}
+function hideCard(){S.sel=null;vis(card.g,false);}
+// ---------- size comparison panel ----------
+function buildCompare(){var g=cmp.g;while(g.firstChild)g.removeChild(g.firstChild);
+ var pw=Math.min(W-2*PAD,1100),px=(W-pw)/2,list=PL.slice();
+ var sumD=0;list.forEach(function(p){sumD+=2*p.R/RE*(p.rings==='ringsSat'?1.2:1);});
+ var GP=NARROW?5:12,gaps=GP*(list.length+1),sunVis=pw*0.1,u=(pw-sunVis-gaps)/sumD;u=Math.min(u,(H*0.3)/(2*69911/RE));var MINS=NARROW?24:40;for(var it=0;it<3;it++){var fixed=0,vs=0;list.forEach(function(p){var wd=2*p.R/RE*(p.rings==='ringsSat'?1.2:1)*u;if(wd<MINS)fixed+=MINS;else vs+=wd/u;});u=Math.max(0.5,Math.min((pw-sunVis-gaps-fixed)/Math.max(vs,1),(H*0.3)/(2*69911/RE)));}
+ var jr=69911/RE*u,ph=2*jr+(NARROW?150:130),py=clamp((H-ph)/2-20,PAD,H-ph-PAD),my=py+44+jr;
+ el('rect',{x:px,y:py,width:pw,height:ph,rx:12,'class':'panel2'},g);
+ var cid='cmpClip';var cp=document.getElementById(cid);if(cp)cp.parentNode.removeChild(cp);cp=el('clipPath',{id:cid},root.querySelector('defs'));el('rect',{x:px,y:py,width:pw,height:ph,rx:12},cp);
+ var sg=el('g',{'clip-path':'url(#'+cid+')'},g);var SR=695700/RE*u;
+ el('circle',{cx:f1(px+sunVis-SR),cy:f1(my),r:f1(SR*1.25),fill:'url(#gSunHalo)'},sg);el('circle',{cx:f1(px+sunVis-SR),cy:f1(my),r:f1(SR),fill:'url(#gSunDisk)'},sg);
+ var t=el('text',{'class':'ct2',x:px+16,y:py+26},g);t.textContent='真实大小对比（同一比例尺：地球半径 = '+trimz(u.toFixed(1))+' 像素）';
+ var lx=px+sunVis+GP;
+ list.forEach(function(p,idx){var r=p.R/RE*u,wd=Math.max(2*r*(p.rings==='ringsSat'?1.2:1),MINS);var cx=lx+wd/2;var ig=el('g',{transform:'translate('+f1(cx)+' '+f1(my)+') scale('+(r/100).toFixed(4)+')'},g);mkIcon(p,ig);
+  var ly=my+jr+20+((NARROW&&idx%2)?28:0);var nt=el('text',{'class':'cn',x:f1(cx),y:f1(ly),'text-anchor':'middle'},g);nt.textContent=p.n;
+  var rt=el('text',{'class':'cr',x:f1(cx),y:f1(ly+14),'text-anchor':'middle'},g);rt.textContent='×'+trimz((p.R/RE).toFixed(p.R/RE<1?2:1));lx+=wd+GP;});
+ var sl=el('text',{'class':'cn',x:px+8,y:f1(py+46),'text-anchor':'start'},g);sl.textContent='太阳 ×109';
+ var note='若把地球缩成 1 毫米的沙粒：太阳是直径 11 厘米的球，在 11.7 米外；海王星在 353 米外；而最近的恒星比邻星，在约 3,150 千米之外。';
+ var nl=wrapLines(note,pw-32,FS*0.85);var nte=el('text',{'class':'cr2'},g);var ny=my+jr+(NARROW?82:58);setLines(nte,nl,px+16,ny,FS*1.3);sa(nte,'font-size',(FS*0.85).toFixed(1));
+ var cl=el('g',{'class':'btn',transform:'translate('+(px+pw-42)+' '+(py+8)+')'},g);el('rect',{width:32,height:32,rx:8},cl);el('path',{d:'M-5 -5L5 5M5 -5L-5 5','class':'bi',transform:'translate(16 16)'},cl);
+ cl.addEventListener('pointerup',function(e){e.stopPropagation();S.compare=false;vis(cmp.g,false);});
+ var need=ny+nl.length*FS*1.3+4-py;if(need>ph)g.firstChild.setAttribute('height',f1(need));}
+// ---------- camera control ----------
+function curLevel(){return nearestLevel(S.z);}
+function startTween(z1,dur){var z0=S.z;S.tw={z0:z0,z1:clamp(z1,ZMIN,ZMAX),t:0,dur:dur||clamp(0.85*Math.abs(z1-z0)+1.3,1.4,6.5)};S.panTw={x:S.panX,y:S.panY,z0:z0};S.anchor=null;}
+function reframe(newFollow){var cx=CX,cy=CY;S.follow=newFollow;var ac=autoCenter(S.z),fp=newFollow?bodyPos(newFollow):ac;S.followB=newFollow?1:0;S.panX=cx-lerp(ac[0],fp[0],S.followB);S.panY=cy-lerp(ac[1],fp[1],S.followB);}
+function goLevel(i,dur){S.jTarget=i;reframe(null);startTween(LV[i].z,dur);}
+function flyZ(k){var b=bodyDef(k);if(!b)return S.z;if(b.o)return Math.log10(1.6);if(b.d0)return Math.log10(45);
+ var R=(b.R||1000)/AU_KM;if(k==='jupiter')return Math.log10(0.0048);if(k==='pluto')return Math.log10(19591*1.5/AU_KM);if(k==='saturn')return Math.log10(6*R);if(k==='sun')return Math.log10(4*R);return Math.log10((b.p?6:5)*R);}
+function flyTo(k){stopJourney();reframe(k);startTween(flyZ(k));}
+function recenter(){reframe(null);S.panTw={x:S.panX,y:S.panY,z0:S.z,t:0,dur:1.2,solo:1};}
+function zoomBy(dz){S.tw=null;S.panTw=null;S.zT=clamp(S.zT+dz,ZMIN,ZMAX);}
+// ---------- journey ----------
+function startJourney(){S.journey=true;hideCard();var i=curLevel();S.paused=false;S.dir=1;S.jTimer=0;
+ if(Math.abs(S.z-LV[i].z)<0.05&&!S.follow&&Math.hypot(S.panX,S.panY)*sc<5){S.jStep=i;S.jTarget=i;S.custom=LV[i].sp;return;}
+ if(S.z>LV[i].z+0.05&&i<LV.length-1)i++;S.jStep=i;S.custom=LV[i].sp;goLevel(i);}
+function stopJourney(){if(S.journey){S.journey=false;S.jTarget=null;}}
+function journeyTick(dt){if(!S.journey||S.tw)return;S.jTimer+=dt;var hold=S.jStep===LV.length-1?12:(S.jStep<=1?7:8.5);
+ if(S.jTimer>hold){var n=S.jStep+1,dur;if(n>=LV.length){n=0;dur=7.5;S.t=(Date.now()-J2000MS)/864e5;}S.jStep=n;S.jTimer=0;S.custom=LV[n].sp;goLevel(n,dur);}}
+function userAct(){if(S.hintT===0)S.hintT=performance.now();}
+// ---------- input ----------
+var ptrs={},drag=null,pinch=null,gaugeDrag=false;
+function pick(x,y,touch){var best=null,bd=1e9;for(var i=visList.length-1;i>=0;i--){var v=visList[i];var d=Math.hypot(v.x-x,v.y-y);var lim=v.r+(touch?14:8);if(d<lim&&d-v.r<bd){bd=d-v.r;best=v;}}return best;}
+function setAnchor(ax,ay){S.anchor={ax:ax,ay:ay,wx:CX+(ax-W/2)/sc,wy:CY-(ay-H/2)/sc,ts:performance.now()};}
+function applyAnchor(){var a=S.anchor;if(!a)return;if(performance.now()-a.ts>600&&Math.abs(S.zT-S.z)<0.002){S.anchor=null;return;}
+ var sx=W/2+(a.wx-CX)*sc,sy=H/2-(a.wy-CY)*sc;S.panX+=(sx-a.ax)/sc;S.panY-=(sy-a.ay)/sc;CX+=(sx-a.ax)/sc;CY-=(sy-a.ay)/sc;}
+function inUI(e){var t=e.target;return t&&t.closest&&t.closest('.btn,.card,.cmp');}
+root.addEventListener('pointerdown',function(e){if(inUI(e))return;userAct();ptrs[e.pointerId]={x:e.clientX,y:e.clientY};try{root.setPointerCapture(e.pointerId);}catch(er){}
+ var ids=Object.keys(ptrs);
+ if(e.target===hud.gHit||(e.clientX>W-PAD-70&&e.clientY>gauge.y0-12&&e.clientY<gauge.y1+12&&ids.length===1)){gaugeDrag=true;stopJourney();S.tw=null;S.panTw=null;S.zT=clamp(ZMIN+(e.clientY-gauge.y0)/(gauge.y1-gauge.y0)*(ZMAX-ZMIN),ZMIN,ZMAX);return;}
+ if(ids.length===1){drag={x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY,t0:performance.now(),moved:false,touch:e.pointerType!=='mouse'};}
+ else if(ids.length===2){var a=ptrs[ids[0]],b=ptrs[ids[1]];pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,mx:(a.x+b.x)/2,my:(a.y+b.y)/2};drag=null;stopJourney();S.tw=null;S.panTw=null;}
+ e.preventDefault();});
+root.addEventListener('pointermove',function(e){
+ if(gaugeDrag&&ptrs[e.pointerId]){S.zT=clamp(ZMIN+(e.clientY-gauge.y0)/(gauge.y1-gauge.y0)*(ZMAX-ZMIN),ZMIN,ZMAX);return;}
+ if(!ptrs[e.pointerId]){if(e.pointerType==='mouse')hover(e.clientX,e.clientY);return;}
+ ptrs[e.pointerId]={x:e.clientX,y:e.clientY};var ids=Object.keys(ptrs);
+ if(pinch&&ids.length>=2){var a=ptrs[ids[0]],b=ptrs[ids[1]];var d=Math.hypot(a.x-b.x,a.y-b.y)||1,mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+  setAnchor(pinch.mx,pinch.my);S.zT=clamp(S.zT+Math.log10(pinch.d/d),ZMIN,ZMAX);S.z=S.zT;S.anchor.ax=mx;S.anchor.ay=my;pinch.d=d;pinch.mx=mx;pinch.my=my;return;}
+ if(drag){var dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.moved&&Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)>6){drag.moved=true;stopJourney();S.tw=null;S.panTw=null;S.anchor=null;}
+  if(drag.moved){S.panX-=dx/sc;S.panY+=dy/sc;}drag.x=e.clientX;drag.y=e.clientY;}});
+function endPtr(e){if(!ptrs[e.pointerId])return;delete ptrs[e.pointerId];
+ if(gaugeDrag){gaugeDrag=false;return;}
+ if(drag&&!drag.moved&&performance.now()-drag.t0<600&&e.type==='pointerup'){var p=pick(e.clientX,e.clientY,drag.touch);if(p)showCard(p.k);else if(S.sel)hideCard();else if(e.pointerType!=='mouse'){if(hud.capCollapsed!==undefined&&e.clientY<hud.capY+60&&e.clientX<hud.capX+hud.capW)hud.capCollapsed=!hud.capCollapsed;}}
+ if(Object.keys(ptrs).length<2)pinch=null;if(!Object.keys(ptrs).length)drag=null;}
+root.addEventListener('pointerup',endPtr);root.addEventListener('pointercancel',endPtr);
+hud.cap.addEventListener('pointerup',function(e){if(e.pointerType==='mouse'){hud.capCollapsed=!hud.capCollapsed;}});
+root.addEventListener('wheel',function(e){e.preventDefault();userAct();stopJourney();S.tw=null;S.panTw=null;var dy=e.deltaY*(e.deltaMode===1?33:(e.deltaMode===2?400:1));
+ dy=clamp(dy,-300,300);S.zT=clamp(S.zT+dy*0.0016,ZMIN,ZMAX);setAnchor(e.clientX,e.clientY);},{passive:false});
+root.addEventListener('dblclick',function(e){if(inUI(e))return;recenter();});
+function hover(x,y){var p=pick(x,y,false);if(!p){vis(hud.tip,false);root.style.cursor='';return;}root.style.cursor='pointer';var b=bodyDef(p.k);if(!b)return;
+ var l2='';if(POS[p.k]&&!b.p){var d=Math.hypot(POS[p.k][0],POS[p.k][1]);l2='距太阳 '+fmtDist(d)+' · 光行 '+fmtLight(d);}else if(b.p){var pp=POS[b.p],mp=POS[p.k];l2='距'+PLK[b.p].n+' '+cnNum(Math.hypot(mp[0]-pp[0],mp[1]-pp[1])*AU_KM,'千米');}else if(b.dly)l2=(b.dly<100?b.dly:comma(b.dly))+' 光年 · '+b.desc.slice(0,16)+(b.desc.length>16?'…':'');else if(p.k==='sun')l2='G2V 黄矮星 · 直径 139 万千米';
+ txt(hud.tipT,b.n);txt(hud.tipT2,l2+'  （点击查看）');var w=Math.max(tokW(b.n,14),tokW(l2+'  （点击查看）',12))+20;var tx=clamp(x+14,4,W-w-4),ty=clamp(y+14,4,H-54);
+ sa(hud.tipBg,'x',f1(tx));sa(hud.tipBg,'y',f1(ty));sa(hud.tipBg,'width',f1(w));sa(hud.tipBg,'height',46);sa(hud.tipT,'x',f1(tx+10));sa(hud.tipT,'y',f1(ty+19));sa(hud.tipT2,'x',f1(tx+10));sa(hud.tipT2,'y',f1(ty+37));vis(hud.tip,true);}
+root.addEventListener('pointerleave',function(){vis(hud.tip,false);});
+document.addEventListener('keydown',function(e){var k=e.key;userAct();
+ if(k==='+'||k==='='){stopJourney();zoomBy(-0.3);}else if(k==='-'||k==='_'){stopJourney();zoomBy(0.3);}
+ else if(k===' '){S.paused=!S.paused;e.preventDefault();}else if(k==='ArrowRight'){stopJourney();goLevel(Math.min(LV.length-1,curLevel()+1));}
+ else if(k==='ArrowLeft'){stopJourney();goLevel(Math.max(0,curLevel()-1));}else if(k==='j'||k==='J'){if(S.journey)stopJourney();else startJourney();}
+ else if(k==='l'||k==='L')S.labels=!S.labels;else if(k==='o'||k==='O')S.orbits=!S.orbits;else if(k==='Escape'){hideCard();if(S.compare){S.compare=false;vis(cmp.g,false);}}
+ else if(k==='c'||k==='C')recenter();});
+// ---------- main loop ----------
+var errCount=0;S.hintT=0;S.custom=null;S.anchor=null;
+function frame(ts){
+ try{var dt=S.lastTs?(ts-S.lastTs)/1000:0.016;S.lastTs=ts;if(!(dt>0))dt=0.016;dt=Math.min(dt,0.1);S.frame++;
