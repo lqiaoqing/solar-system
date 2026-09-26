@@ -1,0 +1,161 @@
+ CRAFT.forEach(function(c){var on=cop>0.01&&c.ok;vis(c.g,on);vis(c.line,on);vis(c.lbl,on&&S.labels);if(!on)return;var px=X(POS[c.k][0]),py=Y(POS[c.k][1]);
+  sa(c.g,'transform','translate('+f1(px)+' '+f1(py)+')');sa(c.g,'opacity',cop.toFixed(2));sa(c.line,'x1',f1(sx));sa(c.line,'y1',f1(sy));sa(c.line,'x2',f1(px));sa(c.line,'y2',f1(py));sa(c.line,'opacity',(0.5*cop).toFixed(2));
+  sa(c.lbl,'x',f1(px+9));sa(c.lbl,'y',f1(py-7));txt(c.lbl,c.n+' · '+f1(c.d)+' AU');visList.push({k:c.k,x:px,y:py,r:8});});
+ // nearby stars
+ var nop=sstep(4.5,5.0,z)*(1-sstep(8.4,9.0,z));vis(L.nstars,nop>0.01);var placed=[];
+ NST.forEach(function(s){var px=X(s.x),py=Y(s.y),dd=Math.hypot(px-sx,py-sy);var on=nop>0.01&&onScr(px,py,20)&&dd>5;vis(s.g,on);
+  var lo=false;if(on){sa(s.g,'transform','translate('+f1(px)+' '+f1(py)+')');sa(s.g,'opacity',(nop*sstep(5,12,dd)).toFixed(3));visList.push({k:'star:'+s.n,x:px,y:py,r:8,st:s});
+   if(S.labels&&nop>0.3&&dd>26){lo=true;for(var i=0;i<placed.length;i++){if(Math.abs(placed[i][0]-px)<110&&Math.abs(placed[i][1]-py)<16){lo=false;break;}}
+    if(lo){placed.push([px,py]);sa(s.lbl,'x',f1(px+8));sa(s.lbl,'y',f1(py+4));}}}
+  vis(s.lbl,lo);});
+ // galaxy
+ vis(L.galaxy,galOp>0.01);var glo=S.labels&&galOp>0.5;
+ if(galOp>0.01){var k=sc*1000*LY_AU,gx=X(GCX),gy=Y(GCY);var vx=sx-gx,vy=sy-gy,rho=Math.atan2(-vy,-vx);
+  sa(L.galaxy,'opacity',galOp.toFixed(3));sa(galG,'transform','translate('+f1(gx)+' '+f1(gy)+') rotate('+(rho*R2D).toFixed(3)+') scale('+k.toPrecision(6)+')');
+  var cr2=Math.cos(rho),sr2=Math.sin(rho);galLabels.forEach(function(g,i){var lx=gx+k*(cr2*g.x-sr2*g.y),ly=gy+k*(sr2*g.x+cr2*g.y);var o=glo&&onScr(lx,ly,-20);vis(galLblEls[i],o);if(o){sa(galLblEls[i],'x',f1(lx));sa(galLblEls[i],'y',f1(ly));}});
+ }else galLblEls.forEach(function(e){vis(e,false);});
+ var yo=galOp>0.3;vis(sunPulse,yo);vis(sunPulse2,yo);vis(youLbl,yo&&S.labels);
+ if(yo){var ph=(tsec%2)/2,ph2=((tsec+1)%2)/2;[[sunPulse,ph],[sunPulse2,ph2]].forEach(function(q){sa(q[0],'cx',f1(sx));sa(q[0],'cy',f1(sy));sa(q[0],'r',f1(6+ph*0+q[1]*26));sa(q[0],'opacity',((1-q[1])*0.9*galOp).toFixed(2));});
+  sa(youLbl,'x',f1(sx));sa(youLbl,'y',f1(sy+30));}
+ // measure line
+ var li=nearestLevel(z),mw=(1-sstep(0.18,0.42,Math.abs(z-LV[li].z)))*(S.compare?0:1)*(S.follow&&S.follow!=='earth'&&S.follow!=='sun'?0:1);var M=mw>0.01?measureFor(li):null;
+ if(M){var ax=X(M.a[0]),ay=Y(M.a[1]),bx=X(M.b[0]),by=Y(M.b[1]);var len=Math.hypot(bx-ax,by-ay);if(len<30||!isFinite(len))M=null;else{
+  var ux=(bx-ax)/len,uy=(by-ay)/len,nx=-uy,ny=ux;sa(meas.line,'x1',f1(ax));sa(meas.line,'y1',f1(ay));sa(meas.line,'x2',f1(bx));sa(meas.line,'y2',f1(by));
+  sa(meas.t1,'x1',f1(ax+nx*6));sa(meas.t1,'y1',f1(ay+ny*6));sa(meas.t1,'x2',f1(ax-nx*6));sa(meas.t1,'y2',f1(ay-ny*6));
+  sa(meas.t2,'x1',f1(bx+nx*6));sa(meas.t2,'y1',f1(by+ny*6));sa(meas.t2,'x2',f1(bx-nx*6));sa(meas.t2,'y2',f1(by-ny*6));
+  var fr=M.at||0.6,mx=ax+(bx-ax)*fr,my=ay+(by-ay)*fr,an=Math.atan2(uy,ux)*R2D;if(an>90)an-=180;if(an<-90)an+=180;
+  var off=-8;var pr=M.t.split(/\s*·\s*/);if(pr.length>1){var l2=pr.pop();setLines(meas.txt,[pr.join(' · '),l2],0,M.below?24:-15,15);}else setLines(meas.txt,[M.t],0,0,15);sa(meas.txt,'transform','translate('+f1(mx)+' '+f1(my)+') rotate('+an.toFixed(1)+') translate(0 '+off+')');sa(meas.g,'opacity',mw.toFixed(2));}}
+ vis(meas.g,!!M);
+ renderHUD(z,li);
+}
+// ---------- HUD ----------
+var FS=13,PAD=12,NARROW=false,BH=38,ctrlTop=0,gauge={x:0,y0:0,y1:0};
+var hud={};
+hud.title=el('text',{'class':'ttl'},L.ui);txt(hud.title,'太阳系 · 宇宙尺度之旅');
+hud.sub=el('text',{'class':'sub'},L.ui);txt(hud.sub,'距离按真实比例 · 对数缩放 · 从地月到银河');
+hud.date=el('text',{'class':'hd'},L.ui);hud.spd=el('text',{'class':'hs'},L.ui);hud.view=el('text',{'class':'hs'},L.ui);
+hud.cap=el('g',{'class':'cap'},L.ui);hud.capBg=el('rect',{rx:10,'class':'panel'},hud.cap);hud.capT=el('text',{'class':'capt'},hud.cap);hud.capD=el('text',{'class':'capd'},hud.cap);hud.capIdx=el('text',{'class':'capi'},hud.cap);
+hud.capCollapsed=false;
+hud.scale=el('g',{},L.ui);hud.sbar=el('path',{stroke:'#e8eeff','stroke-width':1.5,fill:'none'},hud.scale);hud.sT=el('text',{'class':'st'},hud.scale);hud.sL=el('text',{'class':'sl2'},hud.scale);
+hud.n1=el('text',{'class':'note'},L.ui);hud.n2=el('text',{'class':'note'},L.ui);
+hud.gauge=el('g',{},L.ui);hud.gLine=el('line',{stroke:'rgba(160,190,255,.35)','stroke-width':2},hud.gauge);hud.gHit=el('rect',{fill:'transparent','class':'gh'},hud.gauge);
+hud.gTicks=LV.map(function(l,i){var g=el('g',{'class':'gt'},hud.gauge);var t=el('line',{stroke:'rgba(180,200,255,.6)','stroke-width':1},g);var tx=el('text',{'class':'gl2','text-anchor':'end'},g);txt(tx,l.s);return {g:g,t:t,tx:tx};});
+hud.gMark=el('path',{fill:'#ffd36a'},hud.gauge);hud.gNear=el('text',{'class':'gn','text-anchor':'middle'},hud.gauge);txt(hud.gNear,'近');hud.gFar=el('text',{'class':'gn','text-anchor':'middle'},hud.gauge);txt(hud.gFar,'远');
+hud.hint=el('text',{'class':'hint','text-anchor':'middle'},L.ui);txt(hud.hint,'滚轮 / 双指缩放 · 拖动平移 · 点击天体查看资料 · 任意操作即可接管自动漫游');
+hud.tip=el('g',{'pointer-events':'none'},L.ui);hud.tipBg=el('rect',{rx:6,'class':'panel'},hud.tip);hud.tipT=el('text',{'class':'tipt'},hud.tip);hud.tipT2=el('text',{'class':'tipd'},hud.tip);vis(hud.tip,false);
+hud.selRing=el('circle',{fill:'none',stroke:'#ffd36a','stroke-width':1.5,'stroke-dasharray':'3 3'},L.labels);vis(hud.selRing,false);
+// buttons
+var BT={};
+function mkBtn(id,w,label,icon,fn){var g=el('g',{'class':'btn'},L.ui);var r=el('rect',{rx:9,height:BH,width:w},g);var ic=null,tx=null;
+ if(icon)ic=el('path',{d:icon,'class':'bi'},g);if(label){tx=el('text',{'class':'bt','text-anchor':'middle'},g);txt(tx,label);}
+ var b={id:id,g:g,r:r,ic:ic,tx:tx,w:w,fn:fn,label:label};BT[id]=b;
+ g.addEventListener('pointerdown',function(e){e.stopPropagation();g.setAttribute('class','btn down'+(b.on?' on':''));});
+ g.addEventListener('pointerup',function(e){e.stopPropagation();setOn(b,b.on);if(fn){userAct();fn();}});
+ g.addEventListener('pointerleave',function(){setOn(b,b.on);});
+ return b;}
+function setOn(b,on){b.on=on;b.g.setAttribute('class','btn'+(on?' on':'')+(b.disp?' disp':''));}
+var IC={prev:'M4 -7L-3 0L4 7',next:'M-4 -7L3 0L-4 7',play:'M-5 -7L7 0L-5 7Z',pause:'M-6 -7h4v14h-4zM2 -7h4v14h-4z',slow:'M1 -6L-6 0L1 6M7 -6L0 0L7 6',fast:'M-1 -6L6 0L-1 6M-7 -6L0 0L-7 6',plus:'M-7 0H7M0 -7V7',minus:'M-7 0H7'};
+mkBtn('prev',38,null,IC.prev,function(){stopJourney();goLevel(Math.max(0,curLevel()-1));});
+mkBtn('lvl',132,'地月系统',null,null);BT.lvl.disp=true;setOn(BT.lvl,false);
+mkBtn('next',38,null,IC.next,function(){stopJourney();goLevel(Math.min(LV.length-1,curLevel()+1));});
+mkBtn('jr',84,'漫游',IC.play,function(){if(S.journey)stopJourney();else startJourney();});
+mkBtn('rev',48,'倒流',null,function(){S.dir=-S.dir;});
+mkBtn('pause',38,null,IC.pause,function(){S.paused=!S.paused;});
+mkBtn('slow',38,null,IC.slow,function(){setSpeedIdx(-1);});
+mkBtn('spd',92,'1 天/秒',null,null);BT.spd.disp=true;setOn(BT.spd,false);
+mkBtn('fast',38,null,IC.fast,function(){setSpeedIdx(1);});
+mkBtn('today',48,'今天',null,function(){S.t=(Date.now()-J2000MS)/864e5;});
+mkBtn('zout',38,null,IC.minus,function(){stopJourney();zoomBy(0.4);});
+mkBtn('zin',38,null,IC.plus,function(){stopJourney();zoomBy(-0.4);});
+mkBtn('lab',48,'标签',null,function(){S.labels=!S.labels;});
+mkBtn('orb',48,'轨道',null,function(){S.orbits=!S.orbits;});
+mkBtn('tru',74,'真实大小',null,function(){S.trueSize=!S.trueSize;});
+mkBtn('cmp',74,'大小对比',null,function(){S.compare=!S.compare;if(S.compare)buildCompare();vis(cmp.g,S.compare);});
+mkBtn('ctr',64,'⊙ 回中',null,function(){recenter();});
+var GROUPS=[['prev','lvl','next','jr'],['rev','pause','slow','spd','fast','today'],['zout','zin','lab','orb','tru','cmp']];
+function setSpeedIdx(d){if(S.custom!=null){var cur=S.custom,bi=0;for(var i=0;i<SPEEDS.length;i++)if(SPEEDS[i][0]<=cur*1.001)bi=i;var exact=Math.abs(SPEEDS[bi][0]-cur)<cur*0.002;S.spI=d>0?Math.min(bi+1,SPEEDS.length-1):(exact?Math.max(bi-1,0):bi);S.custom=null;}else S.spI=clamp(S.spI+d,0,SPEEDS.length-1);S.paused=false;}
+function getSpeed(){return S.custom!=null?S.custom:SPEEDS[S.spI][0];}
+function fmtSpeed(d){if(S.custom==null)return SPEEDS[S.spI][1];if(d>=365)return trimz((d/365.25).toFixed(1))+' 年/秒';if(d>=30)return Math.round(d/30.44)+' 个月/秒';if(d<0.9)return Math.round(d*24)+' 小时/秒';return Math.round(d)+' 天/秒';}
+// info card
+var card={g:el('g',{'class':'card'},L.ui)};vis(card.g,false);
+card.bg=el('rect',{rx:12,'class':'panel2'},card.g);card.icon=el('g',{},card.g);card.title=el('text',{'class':'ct'},card.g);card.sub=el('text',{'class':'cs'},card.g);
+card.rows=el('g',{},card.g);card.fact=el('text',{'class':'cf'},card.g);card.live=el('text',{'class':'cl2'},card.g);
+card.close=el('g',{'class':'btn'},card.g);el('rect',{width:30,height:30,rx:8},card.close);el('path',{d:'M-5 -5L5 5M5 -5L-5 5','class':'bi'},card.close);
+card.fly=el('g',{'class':'btn'},card.g);card.flyR=el('rect',{width:110,height:32,rx:8},card.fly);card.flyT=el('text',{'class':'bt','text-anchor':'middle',x:55,y:21},card.fly);
+card.close.addEventListener('pointerdown',function(e){e.stopPropagation();});card.close.addEventListener('pointerup',function(e){e.stopPropagation();hideCard();});
+card.fly.addEventListener('pointerdown',function(e){e.stopPropagation();});card.fly.addEventListener('pointerup',function(e){e.stopPropagation();userAct();if(S.follow===S.sel)recenter();else flyTo(S.sel);});
+card.g.addEventListener('pointerdown',function(e){e.stopPropagation();});
+// compare panel
+var cmp={g:el('g',{'class':'cmp'},L.ui)};vis(cmp.g,false);cmp.g.addEventListener('pointerdown',function(e){e.stopPropagation();});
+cmp.g.addEventListener('pointerup',function(e){e.stopPropagation();});
+// ---------- text helpers ----------
+function tokW(t,fs){var w=0;for(var i=0;i<t.length;i++)w+=/[\u0000-\u00ff]/.test(t[i])?fs*0.56:fs;return w;}
+function wrapLines(s,maxW,fs){var toks=s.match(/[A-Za-z0-9.,%°+\-–×\/:*']+|\s|./g)||[],lines=[],cur='',w=0;
+ for(var i=0;i<toks.length;i++){var t=toks[i],tw=tokW(t,fs);
+  if(w+tw>maxW&&cur){if(/^[，。、；：？！）》”…]$/.test(t)){cur+=t;lines.push(cur);cur='';w=0;continue;}lines.push(cur);cur=t===' '?'':t;w=t===' '?0:tw;}else{cur+=t;w+=tw;}}
+ if(cur)lines.push(cur);return lines;}
+function setLines(te,lines,x,y0,lh){while(te.firstChild)te.removeChild(te.firstChild);lines.forEach(function(l,i){var ts=el('tspan',{x:x,y:(y0+i*lh).toFixed(1)},te);ts.textContent=l;});}
+function niceNum(x){var p=Math.pow(10,Math.floor(Math.log10(x))),m=x/p;return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p;}
+// ---------- layout ----------
+var SAB=0;
+function layout(){
+ FS=clamp(MIN/60,11,14.5);PAD=clamp(MIN*0.025,8,18);NARROW=W<760;BH=NARROW?36:38;
+ try{SAB=Math.min(40,parseFloat(getComputedStyle(document.body||document.documentElement).paddingBottom)||0);}catch(e){SAB=0;}
+ sa(bgRect,'width',W);sa(bgRect,'height',H);sa(vig,'width',W);sa(vig,'height',H);
+ // buttons: greedy pack groups into rows
+ var gap=5,ggap=14,maxW=W-2*PAD,rows=[[]],rw=[0];
+ GROUPS.forEach(function(g){var gw=g.reduce(function(s,id){return s+BT[id].w;},0)+gap*(g.length-1);var r=rows.length-1;var need=rw[r]?rw[r]+ggap+gw:gw;
+  if(need>maxW&&rw[r]){rows.push([g]);rw.push(gw);}else{rows[r].push(g);rw[r]=need;}});
+ ctrlTop=H-PAD-SAB-rows.length*(BH+6)+6;
+ rows.forEach(function(r,ri){var x=(W-rw[ri])/2,y=ctrlTop+ri*(BH+6);r.forEach(function(g,gi){if(gi)x+=ggap;g.forEach(function(id,ii){var b=BT[id];if(ii)x+=gap;
+   b.g.setAttribute('transform','translate('+x.toFixed(1)+' '+y.toFixed(1)+')');sa(b.r,'height',BH);if(b.ic)b.ic.setAttribute('transform','translate('+(b.tx?16:b.w/2)+' '+BH/2+')');
+   if(b.tx){b.tx.setAttribute('x',b.ic?(b.w/2+8):b.w/2);b.tx.setAttribute('y',BH/2+4.5);}x+=b.w;});});});
+ sa(hud.title,'x',PAD);sa(hud.title,'y',PAD+FS*1.35);sa(hud.title,'font-size',(FS*1.5).toFixed(1));
+ sa(hud.sub,'x',PAD);sa(hud.sub,'y',PAD+FS*2.9);sa(hud.sub,'font-size',(FS*0.88).toFixed(1));
+ var dy;if(!NARROW){[hud.date,hud.spd,hud.view].forEach(function(t,i){sa(t,'text-anchor','end');sa(t,'x',W-PAD);sa(t,'y',PAD+FS*1.25+i*FS*1.45);});dy=PAD+FS*3.6;}
+ else{[hud.date,hud.spd,hud.view].forEach(function(t,i){sa(t,'text-anchor','start');sa(t,'x',PAD);sa(t,'y',PAD+FS*4.3+i*FS*1.35);});dy=PAD+FS*7.5;}
+ sa(hud.date,'font-size',(FS*1.1).toFixed(1));sa(hud.spd,'font-size',(FS*0.88).toFixed(1));sa(hud.view,'font-size',(FS*0.88).toFixed(1));
+ hud.capX=PAD;hud.capY=NARROW?dy+2:PAD+FS*3.8;hud.capW=NARROW?W-2*PAD-46:Math.min(440,W*0.34);
+ hud.lastCap=-1;
+ // gauge
+ gauge.x=W-PAD-4;gauge.y0=NARROW?hud.capY+120:Math.max(PAD+FS*6,110);gauge.y1=ctrlTop-30;
+ if(gauge.y1-gauge.y0<120){gauge.y0=Math.max(PAD+FS*5,gauge.y1-160);}
+ sa(hud.gLine,'x1',gauge.x);sa(hud.gLine,'x2',gauge.x);sa(hud.gLine,'y1',gauge.y0);sa(hud.gLine,'y2',gauge.y1);
+ sa(hud.gHit,'x',W-PAD-70);sa(hud.gHit,'width',PAD+70);sa(hud.gHit,'y',gauge.y0-12);sa(hud.gHit,'height',gauge.y1-gauge.y0+24);
+ placeGauge();
+ sa(hud.gNear,'x',gauge.x);sa(hud.gNear,'y',gauge.y0-16);sa(hud.gFar,'x',gauge.x);sa(hud.gFar,'y',gauge.y1+22);
+ // scale & notes
+ hud.n2y=ctrlTop-10;hud.n1y=hud.n2y-FS*1.3;hud.sby=hud.n1y-FS*1.9;
+ [hud.n1,hud.n2].forEach(function(t){sa(t,'x',PAD);sa(t,'font-size',(FS*0.8).toFixed(1));});sa(hud.n1,'y',f1(hud.n1y));sa(hud.n2,'y',f1(hud.n2y));
+ sa(hud.sT,'font-size',(FS*0.9).toFixed(1));sa(hud.sL,'font-size',(FS*0.8).toFixed(1));
+ var cb=BT.ctr;sa(cb.r,'height',BH);cb.tx.setAttribute('x',cb.w/2);cb.tx.setAttribute('y',BH/2+4.5);cb.g.setAttribute('transform','translate('+PAD+' '+(hud.sby-FS*1.6-BH-10).toFixed(1)+')');
+ sa(hud.hint,'x',W/2);sa(hud.hint,'y',f1(hud.sby-FS*3.4));sa(hud.hint,'font-size',(FS*0.9).toFixed(1));
+ if(S.sel)showCard(S.sel,true);if(S.compare)buildCompare();
+}
+function placeGauge(){var prev=-1e9;hud.gTicks.forEach(function(t,i){var y=gy(LV[i].z);sa(t.t,'x1',gauge.x-5);sa(t.t,'x2',gauge.x+5);sa(t.t,'y1',f1(y));sa(t.t,'y2',f1(y));var sp=(gauge.y1-gauge.y0)<280?10.5:13;var ly=Math.max(y+4,prev+sp);prev=ly;sa(t.tx,'x',gauge.x-9);sa(t.tx,'y',f1(ly));sa(t.tx,'font-size',sp<13?9.5:11);});}
+function gy(z){return gauge.y0+(z-ZMIN)/(ZMAX-ZMIN)*(gauge.y1-gauge.y0);}
+// ---------- HUD per frame ----------
+var WD=['日','一','二','三','四','五','六'];
+function pad2(n){return n<10?'0'+n:''+n;}
+function renderHUD(z,li){
+ var ms=J2000MS+S.t*864e5,d=new Date(ms),sp=getSpeed();
+ var ds=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';if(sp<=1/24+1e-9)ds+=' '+pad2(d.getHours())+':'+pad2(d.getMinutes())+(sp<1/1000?':'+pad2(d.getSeconds()):'');
+ txt(hud.date,'模拟日期 '+ds);
+ txt(hud.spd,S.paused?'时间已暂停':'时间流速 '+(S.dir<0?'倒流 ':'')+fmtSpeed(sp));
+ var vw=W/sc;txt(hud.view,'视野宽度 '+fmtDist(vw)+' · 光行 '+fmtLight(vw));
+ txt(BT.spd.tx,(S.dir<0?'−':'')+fmtSpeed(sp));
+ var tl=S.journey&&S.jTarget!=null?S.jTarget:li,fb=S.follow&&!S.journey?bodyDef(S.follow):null,ck=fb?'f:'+S.follow:tl;
+ txt(BT.lvl.tx,fb?'跟随：'+fb.n:(tl+1)+'. '+LV[tl].n);
+ if(hud.lastCap!==ck||hud.lastColl!==hud.capCollapsed){hud.lastCap=ck;hud.lastColl=hud.capCollapsed;var cf=FS*0.92,x=hud.capX+12,w=hud.capW;var capTitle=fb?fb.n+'（跟随中）':LV[tl].t,capDesc=fb?(fb.fact||MOONINFO[S.follow]||fb.desc||'')+' 按“⊙ 回中”或双击空白处返回。':LV[tl].d;
+  txt(hud.capT,capTitle+(hud.capCollapsed?'  ▸':''));sa(hud.capT,'x',x);sa(hud.capT,'y',f1(hud.capY+FS*1.55));sa(hud.capT,'font-size',(FS*1.12).toFixed(1));
+  txt(hud.capIdx,fb?'':(tl+1)+' / '+LV.length);sa(hud.capIdx,'x',f1(hud.capX+w-10));sa(hud.capIdx,'y',f1(hud.capY+FS*1.5));sa(hud.capIdx,'font-size',(FS*0.8).toFixed(1));
+  var lines=hud.capCollapsed?[]:wrapLines(capDesc,w-24,cf);setLines(hud.capD,lines,x,hud.capY+FS*1.55+cf*1.65,cf*1.5);sa(hud.capD,'font-size',cf.toFixed(1));
+  sa(hud.capBg,'x',hud.capX);sa(hud.capBg,'y',hud.capY);sa(hud.capBg,'width',w);sa(hud.capBg,'height',f1(FS*2.3+lines.length*cf*1.5+(lines.length?cf*0.6:0)));
+  if(NARROW){gauge.y0=hud.capY+FS*2.3+lines.length*cf*1.5+34;if(gauge.y1-gauge.y0<120)gauge.y0=gauge.y1-120;sa(hud.gLine,'y1',gauge.y0);sa(hud.gHit,'y',gauge.y0-12);sa(hud.gHit,'height',gauge.y1-gauge.y0+24);
+   placeGauge();sa(hud.gNear,'y',gauge.y0-16);}}
+ // scale bar
+ var tp=clamp(W*0.16,80,180),au=tp/sc,lab,nAU;
+ if(au<0.02){var km=niceNum(au*AU_KM);nAU=km/AU_KM;lab=cnNum(km,'千米');}
+ else if(au<30000){var a=niceNum(au);nAU=a;lab=(a<1?trimz(a.toPrecision(2)):comma(a))+' AU';}
+ else{var ly=niceNum(au/LY_AU);nAU=ly*LY_AU;lab=(ly<1?trimz(ly.toPrecision(2)):comma(ly))+' 光年';}
+ var bl=nAU*sc,y=hud.sby;sa(hud.sbar,'d','M'+PAD+' '+f1(y-5)+'V'+f1(y)+'H'+f1(PAD+bl)+'V'+f1(y-5));
